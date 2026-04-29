@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Yaritza · Panel de Gestión de Clientes</title>
@@ -1041,6 +1044,20 @@
         return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
+        // ============ CONFIGURACIÓN DE FIREBASE ============
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNx1-7OJGyvLlCKTbVG98n7tk-SYzlzhM",
+        authDomain: "welquerguzman-49e66.firebaseapp.com",
+        projectId: "welquerguzman-49e66",
+        storageBucket: "welquerguzman-49e66.firebasestorage.app",
+        messagingSenderId: "695315520427",
+        appId: "1:695315520427:web:3ca503a079ca17cf5310ee"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const USUARIO = "yaritza"; 
+
     // ============ MODO OSCURO ============
     const themeTogglePanel = document.getElementById('themeTogglePanel');
     const body = document.body;
@@ -1435,32 +1452,30 @@ document.addEventListener('dragend', function() {
         }
     }
 
-    function cargarDatos() {
-        const guardado = localStorage.getItem('yaritza_clientes');
-        if (guardado) {
-            try {
-                const parsed = JSON.parse(guardado);
-                if (parsed && parsed.length > 0) {
-                    clientes = parsed;
-                    nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
-                    clientes.forEach(cliente => {
-                        if (cliente.pagosHistorial) {
-                            cliente.pagosHistorial.forEach(pago => {
-                                if (!pago.tipo) pago.tipo = "PAGO";
-                            });
-                        }
-                        recalcularEstadoActual(cliente);
-                    });
+    async function cargarDatos() {
+        const docClientes = await db.collection(USUARIO).doc("clientes").get();
+        if (docClientes.exists) {
+            clientes = docClientes.data().data;
+            nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
+            clientes.forEach(c => {
+                if (c.pagosHistorial) {
+                    c.pagosHistorial.forEach(pg => { if (!pg.tipo) pg.tipo = "PAGO"; });
                 }
-            } catch (e) { }
+                recalcularEstadoActual(c);
+            });
         }
-        // Cargar el orden personalizado después de cargar los datos
-        cargarOrdenClientes();
+        const docOrden = await db.collection(USUARIO).doc("orden").get();
+        if (docOrden.exists && docOrden.data().orden.length === clientes.length) {
+            const ordenIds = docOrden.data().orden;
+            clientes.sort((a, b) => ordenIds.indexOf(a.id) - ordenIds.indexOf(b.id));
+        }
+        renderTabla();
     }
 
-    function guardarDatos() {
-        localStorage.setItem('yaritza_clientes', JSON.stringify(clientes));
-        guardarOrdenClientes(); // Guardar el orden también
+    async function guardarDatos() {
+        await db.collection(USUARIO).doc("clientes").set({ data: clientes });
+        await db.collection(USUARIO).doc("orden").set({ orden: clientes.map(c => c.id) });
+        console.log("💾 Datos guardados en la nube:", clientes.length, "clientes");
     }
 
         function getTodayDate() { 
