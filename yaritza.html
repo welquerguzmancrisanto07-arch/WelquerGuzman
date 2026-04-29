@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Yaritza · Panel de Gestión de Clientes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============ TEMA CLARO ============ */
+        :root {
+            --bg-body: #eef2fa;
+            --bg-card: #ffffff;
+            --bg-table: #ffffff;
+            --text-primary: #0a1c2f;
+            --text-secondary: #1f4b6e;
+            --text-muted: #5a7a9e;
+            --accent-primary: #1d4e6b;
+            --accent-success: #10b981;
+            --accent-danger: #ef4444;
+            --accent-warning: #f59e0b;
+            --border-light: #cfdfed;
+            --border-card: #cfdfed;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+            --gradient-hero: linear-gradient(135deg, #0f2b3d 0%, #1b4a6e 100%);
+            --badge-pagado: #c2f0dc;
+            --badge-pagado-text: #136b4c;
+            --badge-deuda: #ffe1cf;
+            --badge-deuda-text: #c23d1c;
+            --btn-back: #1f4b6e;
+            --btn-back-hover: #0e3a52;
+            --input-bg: #fefefe;
+            --input-border: #cfdfed;
+            --modal-bg: #ffffff;
+            --pagos-list-bg: #f7fafd;
+            --info-cliente-bg: #eef3fc;
+            --btn-reset: #dc2626;
+            --btn-reset-hover: #b91c1c;
+            --btn-backup: #8b5cf6;
+            --btn-backup-hover: #7c3aed;
+            --btn-restore: #f59e0b;
+            --btn-restore-hover: #d97706;
+            --drag-over-bg: #dbeafe;
+            --accent-edit: #3b82f6;
+        }
+
+        /* ============ TEMA OSCURO ============ */
+        body.dark {
+            --bg-body: #0f1724;
+            --bg-card: #1a1f2e;
+            --bg-table: #1a1f2e;
+            --text-primary: #cbd5e6;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #60a5fa;
+            --gradient-hero: linear-gradient(135deg, #0f2b3d 0%, #1b4a6e 100%);
+            --badge-pagado: #1e5a46;
+            --badge-pagado-text: #6ee7b7;
+            --badge-deuda: #5c2a1a;
+            --badge-deuda-text: #fdba74;
+            --btn-back: #334155;
+            --btn-back-hover: #475569;
+            --input-bg: #1e293b;
+            --input-border: #334155;
+            --modal-bg: #1a1f2e;
+            --pagos-list-bg: #0f1724;
+            --info-cliente-bg: #0f1724;
+            --border-light: #334155;
+            --btn-reset: #dc2626;
+            --btn-reset-hover: #b91c1c;
+            --btn-backup: #8b5cf6;
+            --btn-backup-hover: #7c3aed;
+            --btn-restore: #f59e0b;
+            --btn-restore-hover: #d97706;
+            --drag-over-bg: #1e293b;
+        }
+
+        body {
+            background: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            padding: 24px 20px;
+            transition: background 0.3s ease, color 0.2s ease;
+        }
+
+        .dashboard {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .header-with-back {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .btn-back {
+            background: var(--btn-back);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            background: var(--btn-back-hover);
+            transform: translateX(-3px);
+        }
+
+        .theme-toggle-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 60px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-panel:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-reset {
+            background: var(--btn-reset);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: var(--btn-reset-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-backup {
+            background: var(--btn-backup);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-backup:hover {
+            background: var(--btn-backup-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-restore {
+            background: var(--btn-restore);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-restore:hover {
+            background: var(--btn-restore-hover);
+            transform: scale(1.02);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-hero {
+            background: var(--gradient-hero);
+            border-radius: 32px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .admin-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.2);
+        }
+
+        .admin-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .admin-text h2 {
+            color: white;
+            font-weight: 700;
+            font-size: 1.7rem;
+        }
+
+        .admin-text p {
+            color: #cbdff2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .stats-modern {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-mod {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .stat-mod i {
+            font-size: 1.6rem;
+        }
+
+        .stat-mod span {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-right: 6px;
+        }
+
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 45px;
+            border-radius: 50px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(29, 78, 107, 0.1);
+        }
+
+        .btn-excel {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-excel:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .suma-stats {
+            background: var(--bg-card);
+            border-radius: 40px;
+            padding: 16px 24px;
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-light);
+            justify-content: center;
+        }
+        
+        .suma-item {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            border-radius: 50px;
+            background: rgba(0,0,0,0.03);
+        }
+        
+        body.dark .suma-item {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .suma-item i { font-size: 1.2rem; }
+        .suma-item strong { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); }
+        .suma-pagado strong { color: var(--accent-success); }
+        .suma-deuda strong { color: var(--accent-warning); }
+        .suma-bolsa { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
+        .suma-bolsa i, .suma-bolsa strong, .suma-bolsa span { color: white; }
+        .suma-bolsa strong { color: white; }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .floating-add-btn {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .floating-add-btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+
+        .form-card {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-light);
+            display: none;
+        }
+
+        .form-card.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--accent-primary);
+        }
+
+        .input-group input, .input-group select {
+            padding: 12px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--input-border);
+            font-family: 'Inter', sans-serif;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 32px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .tab.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .table-container {
+            background: var(--bg-table);
+            border-radius: 32px;
+            overflow-x: auto;
+            border: 1px solid var(--border-light);
+        }
+
+        .client-table {
+            width: 103%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .client-table th {
+            text-align: left;
+            padding: 18px 16px;
+            background: var(--bg-card);
+            font-weight: 700;
+            color: var(--accent-primary);
+            border-bottom: 2px solid var(--border-light);
+            font-size: 0.8rem;
+        }
+
+        .client-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Estilo para filas arrastrables */
+        .draggable-row {
+            cursor: grab;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .draggable-row:active {
+            cursor: grabbing;
+        }
+        .draggable-row.drag-over {
+            background: var(--drag-over-bg);
+            border-top: 2px solid var(--accent-primary);
+        }
+        .drag-handle {
+            cursor: grab;
+            display: inline-block;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        .drag-handle:active { cursor: grabbing; }
+
+        .badge-pagado {
+            background: var(--badge-pagado);
+            color: var(--badge-pagado-text);
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-deuda {
+            background: var(--badge-deuda);
+            color: var(--badge-deuda-text);
+            padding: 6px 11px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.7rem;
+        }
+
+        .btn-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-icon {
+            background: none;
+            border: 1px solid var(--border-light);
+            border-radius: 30px;
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.1s;
+            color: var(--text-secondary);
+        }
+
+        .btn-icon:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.7);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            max-width: 550px;
+            width: 90%;
+            border-radius: 36px;
+            padding: 28px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+        }
+        
+        .modal-content h3, .modal-content h4 {
+            color: var(--text-primary);
+        }
+        
+        .backup-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .backup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: var(--bg-card);
+        }
+        
+        .backup-info {
+            font-size: 0.85rem;
+        }
+        
+        .backup-info strong {
+            color: var(--text-primary);
+        }
+        
+        .backup-info small {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+        
+        .pagos-list {
+            background: var(--pagos-list-bg);
+            border-radius: 24px;
+            padding: 12px;
+            margin: 16px 0;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .pago-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border-light);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pago-item:last-child {
+            border-bottom: none;
+        }
+
+        .pago-info {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .info-cliente {
+            background: var(--info-cliente-bg);
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            border: 1px solid var(--border-light);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .edit-honorario {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .edit-honorario input {
+            width: 110px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .estado-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-estado {
+            flex: 1;
+            padding: 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            border: none;
+        }
+
+        .btn-pagado {
+            background: var(--badge-pagado);
+            color: var(--badge-pagado-text);
+        }
+
+        .btn-deuda {
+            background: var(--badge-deuda);
+            color: var(--badge-deuda-text);
+        }
+
+        .nuevo-pago-input {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .fila-pago {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .fila-pago input, .fila-pago select {
+            flex: 1;
+            padding: 12px;
+            border-radius: 26px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .empty-field {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* ============ CORRECCIÓN MODO OSCURO ============ */
+        body.dark .modal-content,
+        body.dark .modal-content * {
+            color: #ffffff !important;
+        }
+        
+        body.dark .modal-content .badge-pagado,
+        body.dark .modal-content .badge-deuda {
+            color: #ffffff !important;
+        }
+        
+        body.dark .modal-content input,
+        body.dark .modal-content select,
+        body.dark .modal-content textarea {
+            color: #ffffff !important;
+            background-color: #2d3748 !important;
+            border-color: #4a5568 !important;
+        }
+        
+        body.dark .modal-content input::placeholder,
+        body.dark .modal-content textarea::placeholder {
+            color: #a0aec0 !important;
+        }
+        
+        body.dark .modal-content .btn-icon,
+        body.dark .modal-content .btn-primary {
+            color: #ffffff !important;
+        }
+        
+        body.dark .modal-content .btn-primary {
+            background-color: var(--accent-primary) !important;
+            border-color: var(--accent-primary) !important;
+        }
+        
+        body.dark .modal-content .info-cliente {
+            background: #2d3748 !important;
+            border-color: #4a5568 !important;
+        }
+        
+        body.dark .modal-content .pagos-list {
+            background: #1a202c !important;
+        }
+        
+        body.dark .backup-item {
+            background: #1a202c !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            .pago-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <div class="header-with-back">
+        <button id="btnVolverIndex" class="btn-back"><i class="fas fa-arrow-left"></i> Volver al menú principal</button>
+        <div class="button-group">
+            <button id="btnResetear" class="btn-reset"><i class="fas fa-sync-alt"></i> RESETEAR (23 del mes)</button>
+            <button id="btnGuardarRespaldo" class="btn-backup"><i class="fas fa-database"></i> Guardar Respaldo</button>
+            <button id="btnRestaurarRespaldo" class="btn-restore"><i class="fas fa-undo-alt"></i> Restaurar</button>
+            <div class="theme-toggle-panel" id="themeTogglePanel">
+                <i class="fas fa-moon"></i>
+                <span>Modo Oscuro</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-hero">
+        <div class="admin-info">
+            <div class="admin-avatar">
+                <img src="Yaritza.jpeg" alt="Yaritza">
+            </div>
+            <div class="admin-text">
+                <h2>Yaritza · Panel de Gestión</h2>
+                <p><i class="fas fa-check-circle"></i> Administración de clientes · Pagos · Historial financiero</p>
+            </div>
+        </div>
+        <div class="stats-modern">
+            <div class="stat-mod"><i class="fas fa-users"></i> <div><span id="totalClientesStat">0</span> Clientes</div></div>
+            <div class="stat-mod"><i class="fas fa-hand-holding-usd"></i> <div><span id="totalPagaronStat">0</span> Pagaron</div></div>
+            <div class="stat-mod"><i class="fas fa-exclamation-triangle"></i> <div><span id="totalDeudaStat">0</span> En Deuda</div></div>
+        </div>
+    </div>
+
+    <!-- ESTADÍSTICAS MEJORADAS -->
+    <div class="suma-stats">
+        <div class="suma-item suma-pagado"><i class="fas fa-check-circle"></i> Total Pagado: <strong id="sumaPagaron">S/ 0.00</strong></div>
+        <div class="suma-item suma-deuda"><i class="fas fa-hourglass-half"></i> Total Deuda: <strong id="sumaDeuda">S/ 0.00</strong></div>
+        <div class="suma-item suma-bolsa"><i class="fas fa-chart-line"></i> Bolsa: <strong id="sumaBolsa">S/ 0.00</strong></div>
+    </div>
+
+    <div class="search-section">
+        <div class="search-box">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre, encargado, teléfono o actividad...">
+            </div>
+            <button id="btnExportarExcel" class="btn-excel"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button id="mostrarFormBtn" class="floating-add-btn"><i class="fas fa-plus-circle"></i> + Agregar nuevo cliente</button>
+    </div>
+
+    <div id="formClienteCard" class="form-card">
+        <h3 style="margin-bottom: 18px;"><i class="fas fa-user-plus"></i> Nuevo Cliente (Yaritza)</h3>
+        <div class="form-grid">
+            <div class="input-group"><label>Razón Social / Nombre *</label><input type="text" id="nuevoNombre" placeholder="Ej: Empresa SAC"></div>
+            <div class="input-group"><label>Encargado</label><input type="text" id="nuevoEncargado" placeholder="Nombre referente"></div>
+            <div class="input-group"><label>Teléfono</label><input type="text" id="nuevoTelefono" placeholder="9xx xxx xxx"></div>
+            <div class="input-group"><label>Actividad Económica</label><input type="text" id="nuevoActividad" placeholder="Rubro"></div>
+            <div class="input-group"><label>Honorarios (S/)</label><input type="number" id="nuevoHonorario" step="0.01" value="0"></div>
+            <div class="input-group"><label>Estado inicial</label>
+                <select id="nuevoEstado"><option value="SI">Pagado (SI)</option><option value="NO">Deuda (NO)</option></select>
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button id="cancelarFormBtn" class="btn-icon">Cancelar</button>
+            <button id="guardarClienteBtn" class="btn-primary">Guardar cliente</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-filter="all">📋 Todos los clientes</button>
+        <button class="tab" data-filter="pagado">✅ Pagaron (SI)</button>
+        <button class="tab" data-filter="deuda">⚠️ En Deuda (NO)</button>
+    </div>
+
+    <div class="table-container">
+        <table class="client-table" id="mainTable">
+            <thead>
+                <tr><th style="width:40px"></th><th>Razón Social / Cliente</th><th>Encargado</th><th>Teléfono</th><th>Actividad</th><th>Honorarios (S/)</th><th>Estado</th><th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal de Pagos -->
+<div id="modalPagos" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-credit-card"></i> Gestión de Pagos</h3>
+        <div id="modalClienteNombre" class="info-cliente"></div>
+        
+        <div class="info-row">
+            <span><strong>💰 Honorario actual:</strong></span>
+            <div class="edit-honorario">
+                <input type="number" id="editHonorarioMonto" step="0.01">
+                <button id="btnActualizarHonorario" class="btn-icon">Actualizar</button>
+            </div>
+        </div>
+        
+        <div class="info-row">
+            <span><strong>📊 Estado actual:</strong></span>
+            <span id="estadoActualDisplay" class="badge-pagado">PAGÓ</span>
+        </div>
+
+        <div class="estado-buttons">
+            <button id="btnCambiarPagado" class="btn-estado btn-pagado"><i class="fas fa-check-circle"></i> Marcar como PAGÓ</button>
+            <button id="btnCambiarDeuda" class="btn-estado btn-deuda"><i class="fas fa-hourglass-half"></i> Marcar como DEUDA</button>
+        </div>
+
+        <h4 style="margin-top: 20px;"><i class="fas fa-history"></i> Historial de pagos</h4>
+        <div id="listaPagosModal" class="pagos-list">Cargando...</div>
+        
+        <h4 style="margin-top: 16px;"><i class="fas fa-plus-circle"></i> Registrar nuevo pago</h4>
+        <div class="nuevo-pago-input">
+            <div class="fila-pago">
+                <input type="number" id="montoPagoNuevo" placeholder="Monto S/." step="0.01">
+            </div>
+            <div class="fila-pago">
+                <input type="date" id="fechaPagoNuevo">
+                <select id="estadoPagoNuevo">
+                    <option value="SI">✅ PAGÓ</option>
+                    <option value="NO">⚠️ DEUDA</option>
+                </select>
+                <button id="btnRegistrarPago" class="btn-primary">+ Registrar</button>
+            </div>
+        </div>
+        <button id="cerrarModalBtn" class="btn-icon" style="width:100%; margin-top:20px;">Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal de Edición de Pago -->
+<div id="modalEditarPago" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-edit"></i> Editar Pago</h3>
+        <div class="info-row">
+            <span><strong>📅 Fecha:</strong></span>
+            <input type="date" id="editPagoFecha" style="padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-primary);">
+        </div>
+        <div class="info-row">
+            <span><strong>💰 Monto:</strong></span>
+            <input type="number" id="editPagoMonto" step="0.01" style="padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-primary); width: 150px;">
+        </div>
+        <div class="info-row">
+            <span><strong>📊 Tipo:</strong></span>
+            <select id="editPagoTipo" style="padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-primary);">
+                <option value="PAGO">✅ PAGÓ</option>
+                <option value="DEUDA">⚠️ DEUDA</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button id="guardarEdicionPago" class="btn-primary" style="flex:1;">Guardar cambios</button>
+            <button id="cancelarEdicionPago" class="btn-icon" style="flex:1;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Respaldos -->
+<div id="modalRespaldos" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-database"></i> Gestión de Respaldos</h3>
+        <p style="margin-bottom: 15px; color: var(--text-secondary); font-size: 0.85rem;">Aquí puedes guardar y restaurar copias de seguridad de todos tus datos.</p>
+        
+        <div style="margin-bottom: 20px;">
+            <button id="btnGuardarRespaldoModal" class="btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Guardar nuevo respaldo</button>
+        </div>
+        
+        <h4><i class="fas fa-list"></i> Respaldos guardados</h4>
+        <div id="listaRespaldos" class="backup-list">
+            <div style="text-align: center; padding: 20px; color: var(--text-muted);">Cargando respaldos...</div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button id="btnCerrarRespaldos" class="btn-icon" style="flex:1;">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edición de Cliente -->
+<div id="modalEditarCliente" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-user-edit"></i> Editar Cliente</h3>
+        <div class="form-grid">
+            <div class="input-group"><label>Razón Social / Nombre *</label><input type="text" id="editNombre" placeholder="Ej: Empresa SAC"></div>
+            <div class="input-group"><label>Encargado</label><input type="text" id="editEncargado" placeholder="Nombre referente"></div>
+            <div class="input-group"><label>Teléfono</label><input type="text" id="editTelefono" placeholder="9xx xxx xxx"></div>
+            <div class="input-group"><label>Actividad Económica</label><input type="text" id="editActividad" placeholder="Rubro"></div>
+            <div class="input-group"><label>Honorarios (S/)</label><input type="number" id="editHonorario" step="0.01"></div>
+        </div>
+        <div id="editInfoAdicional" style="margin: 15px 0; padding: 10px; background: var(--info-cliente-bg); border-radius: 16px; font-size: 0.8rem;">
+            ⚠️ Si cambias los honorarios, también se actualizará el pago más reciente.
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+            <button id="cancelarEditarClienteBtn" class="btn-icon">Cancelar</button>
+            <button id="guardarEditarClienteBtn" class="btn-primary">Guardar cambios</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============ FUNCIÓN PARA FORMATEAR NÚMEROS CON COMAS ============
+    function formatNumberWithCommas(number) {
+        return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // ============ MODO OSCURO ============
+    const themeTogglePanel = document.getElementById('themeTogglePanel');
+    const body = document.body;
+    
+    const savedTheme = localStorage.getItem('theme_app');
+    if (savedTheme === 'dark') {
+        body.classList.add('dark');
+        updateThemeIconPanel(true);
+    }
+    
+    function updateThemeIconPanel(isDark) {
+        const icon = themeTogglePanel.querySelector('i');
+        const text = themeTogglePanel.querySelector('span');
+        if (isDark) {
+            icon.className = 'fas fa-sun';
+            text.textContent = 'Modo Claro';
+        } else {
+            icon.className = 'fas fa-moon';
+            text.textContent = 'Modo Oscuro';
+        }
+    }
+
+    let autoScrollInterval = null;
+
+function startAutoScroll(direction) {
+    if (autoScrollInterval) clearInterval(autoScrollInterval);
+    autoScrollInterval = setInterval(() => {
+        if (direction === 'down') {
+            window.scrollBy(0, 25);
+        } else if (direction === 'up') {
+            window.scrollBy(0, -25);
+        }
+    }, 16);
+}
+
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+    }
+}
+
+// Modificar el dragOver existente
+const originalDragOver = document.body.dragover;
+document.addEventListener('dragover', function(e) {
+    const y = e.clientY;
+    const windowHeight = window.innerHeight;
+    const scrollThreshold = 80;
+    
+    if (y < scrollThreshold) {
+        startAutoScroll('up');
+    } else if (y > windowHeight - scrollThreshold) {
+        startAutoScroll('down');
+    } else {
+        stopAutoScroll();
+    }
+});
+
+document.addEventListener('dragend', function() {
+    stopAutoScroll();
+});
+    
+    themeTogglePanel.addEventListener('click', () => {
+        const isDark = body.classList.toggle('dark');
+        localStorage.setItem('theme_app', isDark ? 'dark' : 'light');
+        updateThemeIconPanel(isDark);
+    });
+    
+    // ============ FUNCIONES BASE ============
+    function getFechaCobro() {
+        const hoy = new Date();
+        return new Date(hoy.getFullYear(), hoy.getMonth(), 23);
+    }
+
+    function formatFecha(fecha) {
+        if (!fecha) return "";
+        if (typeof fecha === 'string') return fecha;
+        return `${fecha.getDate()}/${fecha.getMonth()+1}/${fecha.getFullYear()}`;
+    }
+
+    function stringToDate(fechaStr) {
+        if (!fechaStr) return null;
+        const partes = fechaStr.split('/');
+        if (partes.length === 3) {
+            return new Date(parseInt(partes[2]), parseInt(partes[1]) - 1, parseInt(partes[0]));
+        }
+        return null;
+    }
+
+    function ordenarPagos(pagos) {
+        if (!pagos || pagos.length === 0) return [];
+        return [...pagos].sort((a, b) => {
+            const fechaA = stringToDate(a.fecha);
+            const fechaB = stringToDate(b.fecha);
+            if (!fechaA && !fechaB) return 0;
+            if (!fechaA) return 1;
+            if (!fechaB) return -1;
+            return fechaB - fechaA;
+        });
+    }
+
+    function recalcularEstadoActual(cliente) {
+        if (!cliente.pagosHistorial || cliente.pagosHistorial.length === 0) {
+            cliente.estadoPago = "NO";
+            return;
+        }
+        
+        const pagosOrdenados = ordenarPagos(cliente.pagosHistorial);
+        const pagoMasReciente = pagosOrdenados[0];
+        
+        if (pagoMasReciente) {
+            cliente.honorarios = pagoMasReciente.monto;
+            cliente.estadoPago = pagoMasReciente.tipo === "PAGO" ? "SI" : "NO";
+        }
+    }
+
+    // ============ SISTEMA DE RESPALDOS ============
+    const BACKUP_KEY = 'yaritza_backups';
+    
+    function guardarRespaldo() {
+        const respaldos = obtenerRespaldos();
+        const ahora = new Date();
+        const nombre = `Respaldo ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
+        
+        const nuevoRespaldo = {
+            id: Date.now(),
+            nombre: nombre,
+            fecha: ahora.toISOString(),
+            datos: JSON.parse(JSON.stringify(clientes)) // Copia profunda
+        };
+        
+        respaldos.unshift(nuevoRespaldo);
+        if (respaldos.length > 20) respaldos.pop();
+        
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(respaldos));
+        alert(`✅ Respaldo guardado: ${nombre}`);
+        return nuevoRespaldo;
+    }
+    
+    function obtenerRespaldos() {
+        const guardado = localStorage.getItem(BACKUP_KEY);
+        if (guardado) {
+            try {
+                return JSON.parse(guardado);
+            } catch(e) {
+                return [];
+            }
+        }
+        return [];
+    }
+    
+    function restaurarRespaldo(respaldoId) {
+        const respaldos = obtenerRespaldos();
+        const respaldo = respaldos.find(r => r.id == respaldoId);
+        
+        if (!respaldo) {
+            alert("No se encontró el respaldo");
+            return false;
+        }
+        
+        if (confirm(`¿Restaurar respaldo "${respaldo.nombre}"?\n\n⚠️ ADVERTENCIA: Se perderán todos los cambios realizados después de este respaldo.`)) {
+            clientes = JSON.parse(JSON.stringify(respaldo.datos));
+            nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
+            guardarDatos();
+            renderTabla();
+            alert(`✅ Respaldo restaurado: ${respaldo.nombre}`);
+            return true;
+        }
+        return false;
+    }
+    
+    function eliminarRespaldo(respaldoId) {
+        if (confirm("¿Eliminar este respaldo permanentemente?")) {
+            let respaldos = obtenerRespaldos();
+            respaldos = respaldos.filter(r => r.id != respaldoId);
+            localStorage.setItem(BACKUP_KEY, JSON.stringify(respaldos));
+            mostrarListaRespaldos();
+            alert("Respaldo eliminado");
+        }
+    }
+    
+    function mostrarListaRespaldos() {
+        const container = document.getElementById("listaRespaldos");
+        const respaldos = obtenerRespaldos();
+        
+        if (respaldos.length === 0) {
+            container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                <i class="fas fa-info-circle"></i> No hay respaldos guardados.
+                <br>Presiona "Guardar nuevo respaldo" para crear tu primera copia.
+            </div>`;
+            return;
+        }
+        
+        let html = "";
+        respaldos.forEach(backup => {
+            const fecha = new Date(backup.fecha);
+            const fechaStr = fecha.toLocaleString();
+            html += `
+                <div class="backup-item">
+                    <div class="backup-info">
+                        <div><strong>${escapeHtml(backup.nombre)}</strong></div>
+                        <small>${fechaStr} · ${backup.datos.length} clientes</small>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn-icon restaurar-backup" data-id="${backup.id}" style="background: var(--accent-success); color: white; border: none;">Restaurar</button>
+                        <button class="btn-icon eliminar-backup" data-id="${backup.id}" style="background: var(--accent-danger); color: white; border: none;">Eliminar</button>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        
+        document.querySelectorAll('.restaurar-backup').forEach(btn => {
+            btn.addEventListener('click', () => restaurarRespaldo(btn.getAttribute('data-id')));
+        });
+        document.querySelectorAll('.eliminar-backup').forEach(btn => {
+            btn.addEventListener('click', () => eliminarRespaldo(btn.getAttribute('data-id')));
+        });
+    }
+    
+    function abrirModalRespaldos() {
+        mostrarListaRespaldos();
+        document.getElementById("modalRespaldos").classList.add("active");
+    }
+
+    // ============ FUNCIÓN RESETEAR (23 de cada mes) ============
+    function resetearDeudas() {
+        const confirmar = confirm("⚠️ ¿Estás seguro de ejecutar el RESETEO mensual?\n\nEsto va a:\n• Poner TODOS los clientes en estado DEUDA\n• Registrar un nuevo pago/deuda con fecha 23 del mes actual\n• Acumular la deuda para quienes ya estaban en deuda\n\n¿Deseas continuar?");
+        
+        if (!confirmar) return;
+        
+        const fechaActual = new Date();
+        const fechaReset = `${fechaActual.getDate()}/${fechaActual.getMonth()+1}/${fechaActual.getFullYear()}`;
+        let clientesActualizados = 0;
+        let deudasAcumuladas = 0;
+        
+        clientes.forEach(cliente => {
+            const yaExisteRegistroHoy = cliente.pagosHistorial.some(p => p.fecha === fechaReset);
+            
+            if (!yaExisteRegistroHoy) {
+                const honorarioActual = cliente.honorarios;
+                
+                const nuevoRegistro = {
+                    fecha: fechaReset,
+                    monto: honorarioActual,
+                    tipo: "DEUDA"
+                };
+                
+                cliente.pagosHistorial.push(nuevoRegistro);
+                clientesActualizados++;
+                
+                if (cliente.estadoPago === "NO") {
+                    cliente.honorarios += honorarioActual;
+                    deudasAcumuladas++;
+                } else {
+                    cliente.estadoPago = "NO";
+                }
+            } else {
+                if (cliente.estadoPago !== "NO") {
+                    cliente.estadoPago = "NO";
+                }
+            }
+        });
+        
+        clientes.forEach(cliente => {
+            if (cliente.pagosHistorial) {
+                cliente.pagosHistorial.sort((a, b) => {
+                    const fechaA = stringToDate(a.fecha);
+                    const fechaB = stringToDate(b.fecha);
+                    if (!fechaA && !fechaB) return 0;
+                    if (!fechaA) return 1;
+                    if (!fechaB) return -1;
+                    return fechaB - fechaA;
+                });
+            }
+        });
+        
+        guardarDatos();
+        renderTabla();
+        
+        alert(`✅ RESETEO completado\n\n📅 Fecha aplicada: ${fechaReset}\n📊 Clientes actualizados: ${clientesActualizados}\n💰 Deudas acumuladas: ${deudasAcumuladas}\n\nTodos los clientes están ahora en estado DEUDA.`);
+    }
+
+    // ============ CLIENTES COMPLETOS (28 registros) ============
+    let clientes = [
+        { id: 1, nombre: "CROCHET PERU S.A.C.", encargado: "SRA EMELY", telefono: "+51 956 436 841", actividad: "VENTA DE ROPA", honorarios: 100.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 100, tipo: "PAGO" }] },
+        { id: 2, nombre: "YANG LU S.A.C", encargado: "SR JULIO", telefono: "+51 985 848 065", actividad: "VENTA DE PRODUCTOS AL MAYOR", honorarios: 0, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 0, tipo: "PAGO" }] },
+        { id: 3, nombre: "LUCIANAS EIRL", encargado: "SR JORGE ALCOCER VZLNO", telefono: "+51 922 781 498", actividad: "VENTA DE PRODUCTOS AL MAYOR", honorarios: 250.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 250, tipo: "PAGO" }] },
+        { id: 4, nombre: "GESTION LEGAL PERU E.I.R.L.", encargado: "SRTA ALONDRA", telefono: "+51 985 703 483", actividad: "SERVICIO DE DOCUMENTACION", honorarios: 0, estadoPago: "SI", pagosHistorial: [] },
+        { id: 5, nombre: "WELQUER EDINSON GUZMAN CRISANTO / WELQUER GUZMAN E.I.R.L.", encargado: "WELQUER GUZMAN", telefono: "", actividad: "SERVICIO CONTABLE", honorarios: 500.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 500, tipo: "PAGO" }] },
+        { id: 6, nombre: "965 PUBLICIDAD S.A.C.", encargado: "SRTA MIGDALIA VZLNA", telefono: "+51 908 836 456", actividad: "SERVICIOS DE IMPRENTA", honorarios: 200.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 200, tipo: "PAGO" }] },
+        { id: 7, nombre: "UMBRELLA CORPORATION KHAM S.A.C.", encargado: "SR KENNY GRANDEZ", telefono: "+51 921 376 846", actividad: "VENTAS DE OLLA", honorarios: 400.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 400, tipo: "PAGO" }] },
+        { id: 8, nombre: "A.R ROJAS E.I.R.L.", encargado: "SR ALFONZO VZLNO", telefono: "+51 946 399 708", actividad: "VENTA AL MENOR Y MAYOR DE PRODUCTOS", honorarios: 200.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 200, tipo: "PAGO" }] },
+        { id: 9, nombre: "SKY BLUE TRAVEL S.A.C.", encargado: "SRTA GERALDINE", telefono: "972 193 637 / 920 449 025", actividad: "SERVICIO DE VIAJES", honorarios: 200.00, estadoPago: "NO", pagosHistorial: [] },
+        { id: 10, nombre: "ZETA", encargado: "PABLO HIDROBO", telefono: "+51 947 352 724", actividad: "", honorarios: 354.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 354, tipo: "PAGO" }] },
+        { id: 11, nombre: "MK IMPRESIONES E.I.R.L.", encargado: "SRTA YAXILET VZLNA", telefono: "+51 947 378 439", actividad: "SERVICIO DE IMPRESIÓN", honorarios: 200.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 200, tipo: "PAGO" }] },
+        { id: 12, nombre: "CHERO", encargado: "SR CHERO", telefono: "+51 987 260 615", actividad: "VENTA AL MAYOR Y MENOS DE PRODUCTOS", honorarios: 250.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 250, tipo: "PAGO" }] },
+        { id: 13, nombre: "IMPORTACIONES RANZHUA EIRL", encargado: "SR TONY ESPINOZA", telefono: "+51 987 260 615", actividad: "", honorarios: 250.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 250, tipo: "PAGO" }] },
+        { id: 14, nombre: "BOTICAS SALUD UNIVERSAL", encargado: "SR JORGE", telefono: "+51 914 909 717", actividad: "VENTA DE MEDICINA", honorarios: 250.00, estadoPago: "NO", pagosHistorial: [] },
+        { id: 15, nombre: "NIDETH", encargado: "SR PETER SEMILLITAS", telefono: "+51 912 213 044", actividad: "ROPA", honorarios: 180.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 180, tipo: "PAGO" }] },
+        { id: 16, nombre: "ROJAS GONZALEZ ALFONZO RAFAEL", encargado: "SR ALFONZO VZLNO", telefono: "+51 948 560 521", actividad: "VENTA AL MENOR Y MAYOR", honorarios: 50.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 50, tipo: "PAGO" }] },
+        { id: 17, nombre: "ROQUE HUAMAN JUANA", encargado: "SRA JUANA", telefono: "+51 962 722 939", actividad: "VENTA DE ACCESORIOS", honorarios: 120.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 120, tipo: "PAGO" }] },
+        { id: 18, nombre: "FLORES DE LLANOS PAULINA", encargado: "SRA PAULINA", telefono: "+51 940 245 090", actividad: "RESTAURANTE UPN", honorarios: 200.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 200, tipo: "PAGO" }] },
+        { id: 19, nombre: "ROYAL ALIMENTOS", encargado: "", telefono: "+51 940 245 090", actividad: "", honorarios: 200.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 200, tipo: "PAGO" }] },
+        { id: 20, nombre: "GRUPO MENACHO INVERSIONES", encargado: "REMAX", telefono: "+51 968 789 834", actividad: "INMOBILIARIA", honorarios: 1400.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 1400, tipo: "PAGO" }] },
+        { id: 21, nombre: "MEDISUR", encargado: "AMIGO DEL COLOMBIANO", telefono: "", actividad: "CLINICA", honorarios: 3500.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 3500, tipo: "PAGO" }] },
+        { id: 22, nombre: "BORIS VILLANUEVA PN", encargado: "", telefono: "", actividad: "", honorarios: 1000.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 1000, tipo: "PAGO" }] },
+        { id: 23, nombre: "PRIME REALTY SHARKS S.A.C.", encargado: "REMAX", telefono: "+56 9 5846 1285", actividad: "", honorarios: 0, estadoPago: "SI", pagosHistorial: [] },
+        { id: 24, nombre: "SETA", encargado: "JESSICA LUJAN", telefono: "", actividad: "", honorarios: 500.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 500, tipo: "PAGO" }] },
+        { id: 25, nombre: "MBG PERU", encargado: "REMAX", telefono: "+56 9 5846 1285", actividad: "", honorarios: 0, estadoPago: "SI", pagosHistorial: [] },
+        { id: 26, nombre: "NEW OPORTUNITY", encargado: "", telefono: "", actividad: "", honorarios: 1062.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 1062, tipo: "PAGO" }] },
+        { id: 27, nombre: "OLPO SAC", encargado: "", telefono: "", actividad: "", honorarios: 50.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 50, tipo: "PAGO" }] },
+        { id: 28, nombre: "YUNKO DO SANTOS", encargado: "", telefono: "", actividad: "", honorarios: 1500.00, estadoPago: "SI", pagosHistorial: [{ fecha: formatFecha(getFechaCobro()), monto: 1500, tipo: "PAGO" }] }
+    ];
+
+    let nextId = 29;
+    let currentFilter = "all";
+    let currentClientForModal = null;
+    let currentSearchTerm = "";
+    let currentEditPagoData = null;
+    let currentEditClienteId = null;
+
+    // ============ FUNCIONES PARA GUARDAR Y CARGAR EL ORDEN ============
+    function guardarOrdenClientes() {
+        const ordenIds = clientes.map(c => c.id);
+        localStorage.setItem('yaritza_orden_clientes', JSON.stringify(ordenIds));
+    }
+
+        function abrirModalEditarCliente(cliente) {
+        currentEditClienteId = cliente.id;
+        document.getElementById("editNombre").value = cliente.nombre;
+        document.getElementById("editEncargado").value = cliente.encargado || "";
+        document.getElementById("editTelefono").value = cliente.telefono || "";
+        document.getElementById("editActividad").value = cliente.actividad || "";
+        document.getElementById("editHonorario").value = cliente.honorarios;
+        document.getElementById("modalEditarCliente").classList.add("active");
+    }
+    
+    function guardarEdicionCliente() {
+        if (currentEditClienteId === null) return;
+        
+        const cliente = clientes.find(c => c.id === currentEditClienteId);
+        if (!cliente) return;
+        
+        const nuevoNombre = document.getElementById("editNombre").value.trim();
+        if (!nuevoNombre) {
+            alert("El nombre del cliente es obligatorio");
+            return;
+        }
+        
+        const nuevoHonorario = parseFloat(document.getElementById("editHonorario").value);
+        
+        cliente.nombre = nuevoNombre;
+        cliente.encargado = document.getElementById("editEncargado").value;
+        cliente.telefono = document.getElementById("editTelefono").value;
+        cliente.actividad = document.getElementById("editActividad").value;
+        
+        if (!isNaN(nuevoHonorario) && nuevoHonorario !== cliente.honorarios) {
+            cliente.honorarios = nuevoHonorario;
+            if (cliente.pagosHistorial && cliente.pagosHistorial.length > 0) {
+                const pagosOrd = ordenarPagos(cliente.pagosHistorial);
+                if (pagosOrd[0]) {
+                    pagosOrd[0].monto = nuevoHonorario;
+                }
+            }
+            recalcularEstadoActual(cliente);
+        }
+        
+        guardarDatos();
+        renderTabla();
+        cerrarModalEditarCliente();
+        alert("✅ Cliente actualizado correctamente");
+    }
+    
+    function cerrarModalEditarCliente() {
+        document.getElementById("modalEditarCliente").classList.remove("active");
+        currentEditClienteId = null;
+    }
+
+    function cargarOrdenClientes() {
+        const ordenGuardado = localStorage.getItem('yaritza_orden_clientes');
+        if (ordenGuardado) {
+            try {
+                const ordenIds = JSON.parse(ordenGuardado);
+                if (Array.isArray(ordenIds) && ordenIds.length === clientes.length) {
+                    clientes.sort((a, b) => ordenIds.indexOf(a.id) - ordenIds.indexOf(b.id));
+                }
+            } catch(e) {}
+        }
+    }
+
+    function cargarDatos() {
+        const guardado = localStorage.getItem('yaritza_clientes');
+        if (guardado) {
+            try {
+                const parsed = JSON.parse(guardado);
+                if (parsed && parsed.length > 0) {
+                    clientes = parsed;
+                    nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
+                    clientes.forEach(cliente => {
+                        if (cliente.pagosHistorial) {
+                            cliente.pagosHistorial.forEach(pago => {
+                                if (!pago.tipo) pago.tipo = "PAGO";
+                            });
+                        }
+                        recalcularEstadoActual(cliente);
+                    });
+                }
+            } catch (e) { }
+        }
+        // Cargar el orden personalizado después de cargar los datos
+        cargarOrdenClientes();
+    }
+
+    function guardarDatos() {
+        localStorage.setItem('yaritza_clientes', JSON.stringify(clientes));
+        guardarOrdenClientes(); // Guardar el orden también
+    }
+
+    function getTodayDate() {
+        return formatFecha(getFechaCobro());
+    }
+
+    function actualizarSumas() {
+        let sumaPagaron = 0, sumaDeuda = 0;
+        clientes.forEach(c => {
+            if (c.estadoPago === "SI") sumaPagaron += c.honorarios;
+            else sumaDeuda += c.honorarios;
+        });
+        let sumaBolsa = sumaPagaron + sumaDeuda;
+        document.getElementById("sumaPagaron").innerHTML = `S/ ${formatNumberWithCommas(sumaPagaron)}`;
+        document.getElementById("sumaDeuda").innerHTML = `S/ ${formatNumberWithCommas(sumaDeuda)}`;
+        document.getElementById("sumaBolsa").innerHTML = `S/ ${formatNumberWithCommas(sumaBolsa)}`;
+    }
+
+    function filtrarClientes() {
+        let filtered = [...clientes];
+        
+        if (currentFilter === "pagado") filtered = filtered.filter(c => c.estadoPago === "SI");
+        if (currentFilter === "deuda") filtered = filtered.filter(c => c.estadoPago === "NO");
+        
+        if (currentSearchTerm.trim() !== "") {
+            const term = currentSearchTerm.toLowerCase();
+            filtered = filtered.filter(c => 
+                c.nombre.toLowerCase().includes(term) ||
+                (c.encargado && c.encargado.toLowerCase().includes(term)) ||
+                (c.telefono && c.telefono.toLowerCase().includes(term)) ||
+                (c.actividad && c.actividad.toLowerCase().includes(term))
+            );
+        }
+        
+        return filtered;
+    }
+
+    // ============ DRAG & DROP ============
+    let dragSrcIndex = null;
+
+    function handleDragStart(e, idx) {
+        dragSrcIndex = idx;
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", idx);
+        // Añadir estilo visual
+        e.target.closest('.draggable-row').style.opacity = "0.5";
+    }
+
+    function handleDragEnd(e) {
+        dragSrcIndex = null;
+        // Restaurar opacidad
+        const rows = document.querySelectorAll('.draggable-row');
+        rows.forEach(row => row.style.opacity = "");
+        // Quitar clase drag-over
+        rows.forEach(row => row.classList.remove('drag-over'));
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        const row = e.target.closest('.draggable-row');
+        if (row && !row.classList.contains('drag-over')) {
+            document.querySelectorAll('.draggable-row').forEach(r => r.classList.remove('drag-over'));
+            row.classList.add('drag-over');
+        }
+    }
+
+    function handleDrop(e, targetIdx) {
+        e.preventDefault();
+        const row = e.target.closest('.draggable-row');
+        if (row) row.classList.remove('drag-over');
+        
+        if (dragSrcIndex === null || dragSrcIndex === targetIdx) return;
+        
+        const filtered = filtrarClientes();
+        
+        if (dragSrcIndex >= 0 && dragSrcIndex < filtered.length && targetIdx >= 0 && targetIdx < filtered.length) {
+            const srcClient = filtered[dragSrcIndex];
+            const targetClient = filtered[targetIdx];
+            
+            // Encontrar los índices reales en el array clientes (no en el filtrado)
+            const srcRealIndex = clientes.findIndex(c => c.id === srcClient.id);
+            const targetRealIndex = clientes.findIndex(c => c.id === targetClient.id);
+            
+            if (srcRealIndex !== -1 && targetRealIndex !== -1) {
+                const [moved] = clientes.splice(srcRealIndex, 1);
+                clientes.splice(targetRealIndex, 0, moved);
+                guardarDatos(); // Esto guarda tanto los datos como el orden
+                renderTabla();
+            }
+        }
+        
+        dragSrcIndex = null;
+    }
+
+    function renderTabla() {
+        const filtered = filtrarClientes();
+        const tbody = document.getElementById("tablaBody");
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px;">✨ No hay clientes en esta categoría</td></tr>`;
+            updateStats();
+            actualizarSumas();
+            return;
+        }
+        
+        let html = "";
+        filtered.forEach((c, idx) => {
+            const estadoSpan = c.estadoPago === "SI" 
+                ? `<span class="badge-pagado"><i class="fas fa-check-circle"></i> PAGÓ</span>` 
+                : `<span class="badge-deuda"><i class="fas fa-hourglass-half"></i> DEUDA</span>`;
+            
+            const telefonoMostrar = c.telefono && c.telefono.trim() !== "" 
+    ? `<a href="https://wa.me/${c.telefono.replace(/\s/g, '').replace(/\+/g, '')}" target="_blank" style="color: #25D366; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="fab fa-whatsapp"></i> ${escapeHtml(c.telefono)}</a>` 
+    : "<span class='empty-field'>—</span>";
+            const actividadMostrar = c.actividad && c.actividad.trim() !== "" ? escapeHtml(c.actividad) : "<span class='empty-field'>—</span>";
+            const encargadoMostrar = c.encargado && c.encargado.trim() !== "" ? escapeHtml(c.encargado) : "<span class='empty-field'>—</span>";
+            
+            html += `<tr class="draggable-row" draggable="true" data-idx="${idx}" data-client-id="${c.id}">
+                        <td style="text-align:center; cursor:grab;"><i class="fas fa-grip-vertical drag-handle"></i></td>
+                        <td style="font-weight:600;">${escapeHtml(c.nombre)}</td>
+                        <td>${encargadoMostrar}</td>
+                        <td>${telefonoMostrar}</td>
+                        <td>${actividadMostrar}</td>
+                        <td>S/ ${formatNumberWithCommas(c.honorarios)}</td>
+                        <td>${estadoSpan}</td>
+                        <td class="btn-actions">
+                            <button class="btn-icon verPagosBtn" data-id="${c.id}"><i class="fas fa-history"></i> Pagos</button>
+                            <button class="btn-icon eliminarBtn" data-id="${c.id}" style="color:var(--accent-danger);"><i class="fas fa-trash"></i> Eliminar</button>
+                            <button class="btn-icon editarClienteBtn" data-id="${c.id}" style="background: var(--accent-edit); color: white; border: none;"><i class="fas fa-edit"></i> Editar</button>
+                        </td>
+                    </tr>`;
+        });
+        tbody.innerHTML = html;
+        attachEventButtons();
+        attachDragEvents();
+        updateStats();
+        actualizarSumas();
+    }
+
+    function attachDragEvents() {
+        const rows = document.querySelectorAll(".draggable-row");
+        rows.forEach(row => {
+            row.removeEventListener("dragstart", handleDragStartWrapper);
+            row.removeEventListener("dragend", handleDragEnd);
+            row.removeEventListener("dragover", handleDragOver);
+            row.removeEventListener("drop", handleDropWrapper);
+            
+            const idx = parseInt(row.getAttribute("data-idx"));
+            const dragStartWrapper = (e) => handleDragStart(e, idx);
+            const dropWrapper = (e) => handleDrop(e, idx);
+            
+            row.addEventListener("dragstart", dragStartWrapper);
+            row.addEventListener("dragend", handleDragEnd);
+            row.addEventListener("dragover", handleDragOver);
+            row.addEventListener("drop", dropWrapper);
+            
+            // Guardar referencias para poder remover después (aunque no es necesario en esta implementación)
+            row._dragStartWrapper = dragStartWrapper;
+            row._dropWrapper = dropWrapper;
+        });
+    }
+    
+    // Wrappers para mantener referencias
+    function handleDragStartWrapper(e) {
+        const row = e.target.closest('.draggable-row');
+        if (row) {
+            const idx = parseInt(row.getAttribute("data-idx"));
+            handleDragStart(e, idx);
+        }
+    }
+    
+    function handleDropWrapper(e) {
+        const row = e.target.closest('.draggable-row');
+        if (row) {
+            const idx = parseInt(row.getAttribute("data-idx"));
+            handleDrop(e, idx);
+        }
+    }
+
+    function attachEventButtons() {
+                document.querySelectorAll('.editarClienteBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                const cliente = clientes.find(c => c.id === id);
+                if (cliente) abrirModalEditarCliente(cliente);
+            });
+        });
+
+        document.querySelectorAll('.verPagosBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                const cliente = clientes.find(c => c.id === id);
+                if (cliente) abrirModalPagos(cliente);
+            });
+        });
+        document.querySelectorAll('.eliminarBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                if (confirm("¿Eliminar este cliente? Se borrará todo su historial.")) {
+                    clientes = clientes.filter(c => c.id !== id);
+                    guardarDatos();
+                    renderTabla();
+                }
+            });
+        });
+    }
+
+    function abrirModalPagos(cliente) {
+        currentClientForModal = cliente;
+        actualizarInfoModal();
+        actualizarListaPagosModal(cliente);
+        document.getElementById("modalPagos").classList.add("active");
+    }
+
+    function actualizarInfoModal() {
+        if (!currentClientForModal) return;
+        document.getElementById("modalClienteNombre").innerHTML = `<strong>${escapeHtml(currentClientForModal.nombre)}</strong>`;
+        document.getElementById("editHonorarioMonto").value = currentClientForModal.honorarios;
+        const estadoDisplay = document.getElementById("estadoActualDisplay");
+        if (currentClientForModal.estadoPago === "SI") {
+            estadoDisplay.innerHTML = '<i class="fas fa-check-circle"></i> PAGÓ';
+            estadoDisplay.className = "badge-pagado";
+        } else {
+            estadoDisplay.innerHTML = '<i class="fas fa-hourglass-half"></i> DEUDA';
+            estadoDisplay.className = "badge-deuda";
+        }
+    }
+
+    function actualizarListaPagosModal(cliente) {
+        const container = document.getElementById("listaPagosModal");
+        if (!cliente.pagosHistorial || cliente.pagosHistorial.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:20px;"><i class="fas fa-receipt"></i> Aún no hay pagos registrados.</div>`;
+            return;
+        }
+        const pagosOrdenados = ordenarPagos(cliente.pagosHistorial);
+        let html = "";
+        pagosOrdenados.forEach((p, idx) => {
+            const tipoBadge = p.tipo === "PAGO" 
+                ? '<span class="badge-pagado" style="font-size:0.7rem;"><i class="fas fa-check-circle"></i> PAGÓ</span>'
+                : '<span class="badge-deuda" style="font-size:0.7rem;"><i class="fas fa-hourglass-half"></i> DEUDA</span>';
+            html += `<div class="pago-item">
+                        <div class="pago-info">
+                            <span><i class="far fa-calendar-alt"></i> ${p.fecha}</span>
+                            <span style="font-weight:700;">S/ ${formatNumberWithCommas(p.monto)}</span>
+                            ${tipoBadge}
+                        </div>
+                        <div>
+                            <button class="btn-icon editarPagoBtn" data-fecha="${p.fecha}" data-monto="${p.monto}" data-tipo="${p.tipo}" style="margin-right:5px;"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn-icon eliminarPagoBtn" data-fecha="${p.fecha}" data-monto="${p.monto}" data-tipo="${p.tipo}" style="color:var(--accent-danger);"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                        </div>
+                    </div>`;
+        });
+        container.innerHTML = html;
+        
+        document.querySelectorAll('.editarPagoBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const fecha = btn.getAttribute('data-fecha');
+                const monto = parseFloat(btn.getAttribute('data-monto'));
+                const tipo = btn.getAttribute('data-tipo');
+                abrirModalEditarPago(fecha, monto, tipo);
+            });
+        });
+        
+        document.querySelectorAll('.eliminarPagoBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const fecha = btn.getAttribute('data-fecha');
+                const monto = parseFloat(btn.getAttribute('data-monto'));
+                const tipo = btn.getAttribute('data-tipo');
+                
+                if (confirm(`¿Eliminar ${tipo === "PAGO" ? "pago" : "deuda"} de S/ ${formatNumberWithCommas(monto)} del ${fecha}?`)) {
+                    const index = currentClientForModal.pagosHistorial.findIndex(p => p.fecha === fecha && p.monto === monto && p.tipo === tipo);
+                    if (index !== -1) {
+                        currentClientForModal.pagosHistorial.splice(index, 1);
+                        recalcularEstadoActual(currentClientForModal);
+                        guardarDatos();
+                        actualizarListaPagosModal(currentClientForModal);
+                        actualizarInfoModal();
+                        renderTabla();
+                        alert("Registro eliminado correctamente");
+                    }
+                }
+            });
+        });
+    }
+
+    function abrirModalEditarPago(fecha, monto, tipo) {
+        currentEditPagoData = { fecha, monto, tipo };
+        
+        let fechaFormatted = "";
+        if (fecha) {
+            const partes = fecha.split('/');
+            if (partes.length === 3) {
+                fechaFormatted = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+            }
+        }
+        
+        document.getElementById("editPagoFecha").value = fechaFormatted;
+        document.getElementById("editPagoMonto").value = monto;
+        document.getElementById("editPagoTipo").value = tipo;
+        
+        document.getElementById("modalEditarPago").classList.add("active");
+    }
+
+    function guardarEdicionPago() {
+        if (!currentEditPagoData || !currentClientForModal) return;
+        
+        const nuevaFechaInput = document.getElementById("editPagoFecha").value;
+        const nuevoMonto = parseFloat(document.getElementById("editPagoMonto").value);
+        const nuevoTipo = document.getElementById("editPagoTipo").value;
+        
+        if (isNaN(nuevoMonto) || nuevoMonto <= 0) {
+            alert("Ingrese un monto válido");
+            return;
+        }
+        
+        let nuevaFecha = "";
+        if (nuevaFechaInput) {
+            const partes = nuevaFechaInput.split('-');
+            nuevaFecha = `${partes[2]}/${partes[1]}/${partes[0]}`;
+        } else {
+            nuevaFecha = currentEditPagoData.fecha;
+        }
+        
+        const index = currentClientForModal.pagosHistorial.findIndex(p => 
+            p.fecha === currentEditPagoData.fecha && 
+            p.monto === currentEditPagoData.monto && 
+            p.tipo === currentEditPagoData.tipo
+        );
+        
+        if (index !== -1) {
+            currentClientForModal.pagosHistorial[index] = {
+                fecha: nuevaFecha,
+                monto: nuevoMonto,
+                tipo: nuevoTipo
+            };
+            
+            recalcularEstadoActual(currentClientForModal);
+            guardarDatos();
+            actualizarListaPagosModal(currentClientForModal);
+            actualizarInfoModal();
+            renderTabla();
+            alert("Pago actualizado correctamente");
+        }
+        
+        cerrarModalEditarPago();
+    }
+
+    function cerrarModalEditarPago() {
+        document.getElementById("modalEditarPago").classList.remove("active");
+        currentEditPagoData = null;
+    }
+
+    function registrarPagoClienteActual(monto, fechaSeleccionada, estadoSeleccionado) {
+        if (!currentClientForModal) return;
+        if (isNaN(monto) || monto <= 0) {
+            alert("Ingrese un monto válido mayor a cero");
+            return;
+        }
+        
+        let fechaPago;
+        let fechaDate;
+        if (fechaSeleccionada) {
+            const partes = fechaSeleccionada.split('-');
+            fechaPago = `${partes[2]}/${partes[1]}/${partes[0]}`;
+            fechaDate = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+        } else {
+            fechaPago = getTodayDate();
+            fechaDate = getFechaCobro();
+        }
+        
+        const tipoPago = estadoSeleccionado === "SI" ? "PAGO" : "DEUDA";
+        
+        const nuevoPago = {
+            fecha: fechaPago,
+            monto: parseFloat(monto),
+            tipo: tipoPago
+        };
+        
+        const pagosActuales = currentClientForModal.pagosHistorial || [];
+        let pagoMasRecienteActual = null;
+        if (pagosActuales.length > 0) {
+            const pagosOrdenadosActual = ordenarPagos(pagosActuales);
+            pagoMasRecienteActual = pagosOrdenadosActual[0];
+        }
+        
+        let esMasReciente = false;
+        if (!pagoMasRecienteActual) {
+            esMasReciente = true;
+        } else {
+            const fechaActualStr = pagoMasRecienteActual.fecha;
+            const fechaActualDate = stringToDate(fechaActualStr);
+            if (fechaActualDate && fechaDate > fechaActualDate) {
+                esMasReciente = true;
+            }
+        }
+        
+        currentClientForModal.pagosHistorial.push(nuevoPago);
+        
+        if (esMasReciente) {
+            currentClientForModal.honorarios = parseFloat(monto);
+            currentClientForModal.estadoPago = estadoSeleccionado;
+            alert(`✅ Pago registrado: S/ ${formatNumberWithCommas(monto)} - ${tipoPago} - Fecha: ${fechaPago}`);
+        } else {
+            alert(`✅ Pago registrado: S/ ${formatNumberWithCommas(monto)} - ${tipoPago} - Fecha: ${fechaPago}\nEl estado principal no ha cambiado.`);
+        }
+        
+        guardarDatos();
+        actualizarListaPagosModal(currentClientForModal);
+        actualizarInfoModal();
+        renderTabla();
+        
+        document.getElementById("montoPagoNuevo").value = "";
+        document.getElementById("fechaPagoNuevo").value = "";
+        document.getElementById("estadoPagoNuevo").value = "SI";
+    }
+
+    function actualizarHonorarioCliente() {
+        if (!currentClientForModal) return;
+        const nuevoHonorario = parseFloat(document.getElementById("editHonorarioMonto").value);
+        if (isNaN(nuevoHonorario)) return;
+        currentClientForModal.honorarios = nuevoHonorario;
+        guardarDatos();
+        renderTabla();
+        alert(`Honorario actualizado a S/ ${formatNumberWithCommas(nuevoHonorario)}`);
+    }
+
+    function cambiarEstadoManual(nuevoEstado) {
+        if (!currentClientForModal) return;
+        currentClientForModal.estadoPago = nuevoEstado;
+        guardarDatos();
+        actualizarInfoModal();
+        renderTabla();
+        alert(`Estado cambiado a ${nuevoEstado === "SI" ? "PAGÓ" : "DEUDA"}`);
+    }
+
+    function addNewClient(data) {
+        const newId = nextId++;
+        const nuevoCliente = {
+            id: newId,
+            nombre: data.nombre,
+            encargado: data.encargado || "",
+            telefono: data.telefono || "",
+            actividad: data.actividad || "",
+            honorarios: parseFloat(data.honorarios) || 0,
+            estadoPago: data.estadoPago,
+            pagosHistorial: data.estadoPago === "SI" ? [{ fecha: getTodayDate(), monto: parseFloat(data.honorarios) || 0, tipo: "PAGO" }] : []
+        };
+        clientes.push(nuevoCliente);
+        guardarDatos();
+        renderTabla();
+        document.getElementById("formClienteCard").classList.remove("show");
+        limpiarFormulario();
+    }
+
+    function limpiarFormulario() {
+        document.getElementById("nuevoNombre").value = "";
+        document.getElementById("nuevoEncargado").value = "";
+        document.getElementById("nuevoTelefono").value = "";
+        document.getElementById("nuevoActividad").value = "";
+        document.getElementById("nuevoHonorario").value = "0";
+        document.getElementById("nuevoEstado").value = "SI";
+    }
+
+    function updateStats() {
+        const total = clientes.length;
+        const pagaron = clientes.filter(c => c.estadoPago === "SI").length;
+        const deuda = clientes.filter(c => c.estadoPago === "NO").length;
+        document.getElementById("totalClientesStat").innerText = total;
+        document.getElementById("totalPagaronStat").innerText = pagaron;
+        document.getElementById("totalDeudaStat").innerText = deuda;
+    }
+
+    function exportarExcel() {
+        let csvContent = "\uFEFFNombre,Encargado,Teléfono,Actividad,Honorarios (S/),Estado\n";
+        
+        clientes.forEach(c => {
+            const row = [
+                `"${c.nombre.replace(/"/g, '""')}"`,
+                `"${(c.encargado || "").replace(/"/g, '""')}"`,
+                `"${(c.telefono || "").replace(/"/g, '""')}"`,
+                `"${(c.actividad || "").replace(/"/g, '""')}"`,
+                c.honorarios.toFixed(2),
+                c.estadoPago === "SI" ? "PAGÓ" : "DEUDA"
+            ].join(",");
+            csvContent += row + "\n";
+        });
+        
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `clientes_yaritza_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        alert("✅ Exportación completada");
+    }
+
+    function escapeHtml(str) { 
+        if(!str) return ""; 
+        return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});
+    }
+
+    // Eventos
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+        currentSearchTerm = e.target.value;
+        renderTabla();
+    });
+    
+    document.getElementById("btnExportarExcel").addEventListener("click", exportarExcel);
+    document.getElementById("btnResetear").addEventListener("click", resetearDeudas);
+    
+    document.getElementById("btnGuardarRespaldo").addEventListener("click", () => {
+        guardarRespaldo();
+    });
+    document.getElementById("btnGuardarRespaldoModal").addEventListener("click", () => {
+        guardarRespaldo();
+        mostrarListaRespaldos();
+    });
+    document.getElementById("btnRestaurarRespaldo").addEventListener("click", abrirModalRespaldos);
+    document.getElementById("btnCerrarRespaldos").addEventListener("click", () => {
+        document.getElementById("modalRespaldos").classList.remove("active");
+    });
+    
+    document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            const filter = tab.getAttribute("data-filter");
+            if(filter === "all") currentFilter = "all";
+            else if(filter === "pagado") currentFilter = "pagado";
+            else currentFilter = "deuda";
+            renderTabla();
+        });
+    });
+    
+    const modalPagos = document.getElementById("modalPagos");
+    const modalEditar = document.getElementById("modalEditarPago");
+    const modalRespaldos = document.getElementById("modalRespaldos");
+    
+    document.getElementById("cerrarModalBtn").addEventListener("click", () => modalPagos.classList.remove("active"));
+    document.getElementById("btnRegistrarPago").addEventListener("click", () => {
+        const monto = parseFloat(document.getElementById("montoPagoNuevo").value);
+        const fecha = document.getElementById("fechaPagoNuevo").value;
+        const estado = document.getElementById("estadoPagoNuevo").value;
+        registrarPagoClienteActual(monto, fecha, estado);
+    });
+    document.getElementById("btnActualizarHonorario").addEventListener("click", () => actualizarHonorarioCliente());
+    document.getElementById("btnCambiarPagado").addEventListener("click", () => cambiarEstadoManual("SI"));
+    document.getElementById("btnCambiarDeuda").addEventListener("click", () => cambiarEstadoManual("NO"));
+    
+    document.getElementById("guardarEdicionPago").addEventListener("click", () => guardarEdicionPago());
+    document.getElementById("cancelarEdicionPago").addEventListener("click", () => cerrarModalEditarPago());
+    
+    window.addEventListener("click", (e) => { 
+        if(e.target === modalPagos) modalPagos.classList.remove("active");
+        if(e.target === modalEditar) modalEditar.classList.remove("active");
+        if(e.target === modalRespaldos) modalRespaldos.classList.remove("active");
+    });
+    
+    const formCard = document.getElementById("formClienteCard");
+    document.getElementById("mostrarFormBtn").addEventListener("click", () => formCard.classList.toggle("show"));
+    document.getElementById("cancelarFormBtn").addEventListener("click", () => { formCard.classList.remove("show"); limpiarFormulario(); });
+    document.getElementById("guardarClienteBtn").addEventListener("click", () => {
+        const nombre = document.getElementById("nuevoNombre").value.trim();
+        if(!nombre) { alert("El nombre del cliente es obligatorio"); return; }
+        addNewClient({
+            nombre: nombre,
+            encargado: document.getElementById("nuevoEncargado").value,
+            telefono: document.getElementById("nuevoTelefono").value,
+            actividad: document.getElementById("nuevoActividad").value,
+            honorarios: document.getElementById("nuevoHonorario").value,
+            estadoPago: document.getElementById("nuevoEstado").value
+        });
+    });
+    
+    document.getElementById("btnVolverIndex").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+        document.getElementById("guardarEditarClienteBtn").addEventListener("click", guardarEdicionCliente);
+    document.getElementById("cancelarEditarClienteBtn").addEventListener("click", cerrarModalEditarCliente);
+    window.addEventListener("click", (e) => { 
+        if(e.target === document.getElementById("modalEditarCliente")) cerrarModalEditarCliente();
+    });
+    
+    cargarDatos();
+    renderTabla();
+</script>
+</body>
+</html>
