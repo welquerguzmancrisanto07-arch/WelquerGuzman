@@ -417,19 +417,26 @@
     function restaurarRespaldo(respaldoId) {
         const respaldos = obtenerRespaldos();
         const respaldo = respaldos.find(r => r.id == respaldoId);
-        if (!respaldo) { alert("No se encontró el respaldo"); return false; }
-        if (confirm(`¿Restaurar respaldo "${respaldo.nombre}"?\n\n⚠️ ADVERTENCIA: Se perderán todos los cambios.`)) {
+        
+        if (!respaldo) {
+            alert("No se encontró el respaldo");
+            return false;
+        }
+        
+        if (confirm(`¿Restaurar respaldo "${respaldo.nombre}"?\n\n⚠️ ADVERTENCIA: Se perderán todos los cambios realizados después de este respaldo.`)) {
             clientes = JSON.parse(JSON.stringify(respaldo.datos));
             nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
             guardarDatos();
             renderTabla();
+            document.getElementById("modalRespaldos").classList.remove("active");
             alert(`✅ Respaldo restaurado: ${respaldo.nombre}`);
             return true;
         }
         return false;
     }
+    
     function eliminarRespaldo(respaldoId) {
-        if (confirm("¿Eliminar este respaldo?")) {
+        if (confirm("¿Eliminar este respaldo permanentemente?")) {
             let respaldos = obtenerRespaldos();
             respaldos = respaldos.filter(r => r.id != respaldoId);
             localStorage.setItem(BACKUP_KEY, JSON.stringify(respaldos));
@@ -437,20 +444,57 @@
             alert("Respaldo eliminado");
         }
     }
-    function mostrarListaRespaldos() {
+            function mostrarListaRespaldos() {
         const container = document.getElementById("listaRespaldos");
         const respaldos = obtenerRespaldos();
-        if (respaldos.length === 0) { container.innerHTML = '<div style="text-align:center;padding:20px;">No hay respaldos guardados.</div>'; return; }
+        
+        // Filtrar respaldos corruptos (sin datos)
+        const respaldosValidos = respaldos.filter(backup => backup && backup.datos && Array.isArray(backup.datos));
+        
+        if (respaldosValidos.length === 0) {
+            container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                <i class="fas fa-info-circle"></i> No hay respaldos guardados.
+                <br>Presiona "Guardar nuevo respaldo" para crear tu primera copia.
+            </div>`;
+            return;
+        }
+        
         let html = "";
-        respaldos.forEach(backup => {
-            html += `<div class="backup-item"><div><strong>${escapeHtml(backup.nombre)}</strong><br><small>${new Date(backup.fecha).toLocaleString()} · ${backup.datos.length} clientes</small></div><div style="display:flex;gap:6px;"><button class="btn-icon restaurar-backup" data-id="${backup.id}" style="background:var(--accent-success);color:white;">Restaurar</button><button class="btn-icon eliminar-backup" data-id="${backup.id}" style="background:var(--accent-danger);color:white;">Eliminar</button></div></div>`;
+        respaldosValidos.forEach(backup => {
+            const fecha = new Date(backup.fecha);
+            const fechaStr = fecha.toLocaleString();
+            html += `
+                <div class="backup-item">
+                    <div class="backup-info">
+                        <div><strong>${escapeHtml(backup.nombre)}</strong></div>
+                        <small>${fechaStr} · ${backup.datos.length} clientes</small>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn-icon restaurar-backup" data-id="${backup.id}" style="background: var(--accent-success); color: white; border: none;">Restaurar</button>
+                        <button class="btn-icon eliminar-backup" data-id="${backup.id}" style="background: var(--accent-danger); color: white; border: none;">Eliminar</button>
+                    </div>
+                </div>
+            `;
         });
         container.innerHTML = html;
-        document.querySelectorAll('.restaurar-backup').forEach(btn => btn.addEventListener('click', () => restaurarRespaldo(btn.getAttribute('data-id'))));
-        document.querySelectorAll('.eliminar-backup').forEach(btn => btn.addEventListener('click', () => eliminarRespaldo(btn.getAttribute('data-id'))));
+        
+        document.querySelectorAll('.restaurar-backup').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                restaurarRespaldo(id);
+            });
+        });
+        document.querySelectorAll('.eliminar-backup').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                eliminarRespaldo(id);
+            });
+        });
     }
-    function abrirModalRespaldos() { mostrarListaRespaldos(); document.getElementById("modalRespaldos").classList.add("active"); }
-
+    function abrirModalRespaldos() {
+        mostrarListaRespaldos();
+        document.getElementById("modalRespaldos").classList.add("active");
+    }
     // RESETEO
     function resetearDeudas() {
         if (!confirm("⚠️ ¿Estás seguro de ejecutar el RESETEO mensual?\n\nEsto pondrá TODOS los clientes en estado DEUDA con fecha 23 del mes actual.")) return;
@@ -497,16 +541,51 @@
         const orden = localStorage.getItem('denis_orden_clientes');
         if (orden) { try { const ids = JSON.parse(orden); if (ids.length === clientes.length) clientes.sort((a,b) => ids.indexOf(a.id) - ids.indexOf(b.id)); } catch(e) {} }
     }
+
     function cargarDatos() {
         const guardado = localStorage.getItem('denis_clientes');
         if (guardado) {
-            try { const p = JSON.parse(guardado); if (p && p.length) { clientes = p; nextId = Math.max(...clientes.map(c => c.id), 0) + 1; clientes.forEach(c => { if (c.pagosHistorial) c.pagosHistorial.forEach(pg => { if (!pg.tipo) pg.tipo = "PAGO"; }); recalcularEstadoActual(c); }); } } catch(e) {}
+            try { 
+                const p = JSON.parse(guardado); 
+                if (p && p.length > 0) { 
+                    clientes = p; 
+                    nextId = Math.max(...clientes.map(c => c.id), 0) + 1; 
+                    // NO recalculamos estado automáticamente para preservar cambios manuales
+                    clientes.forEach(c => { 
+                        if (c.pagosHistorial) {
+                            c.pagosHistorial.forEach(pg => { 
+                                if (!pg.tipo) pg.tipo = "PAGO"; 
+                            });
+                        }
+                    }); 
+                } 
+            } catch(e) { console.error(e); }
         }
         cargarOrdenClientes();
     }
-    function guardarDatos() { localStorage.setItem('denis_clientes', JSON.stringify(clientes)); guardarOrdenClientes(); }
-    function getTodayDate() { return formatFecha(getFechaCobro()); }
-    function actualizarSumas() { let pag = 0, deu = 0; clientes.forEach(c => { if (c.estadoPago === "SI") pag += c.honorarios; else deu += c.honorarios; }); document.getElementById("sumaPagaron").innerHTML = `S/ ${formatNumberWithCommas(pag)}`; document.getElementById("sumaDeuda").innerHTML = `S/ ${formatNumberWithCommas(deu)}`; document.getElementById("sumaBolsa").innerHTML = `S/ ${formatNumberWithCommas(pag + deu)}`; }
+
+    function guardarDatos() {
+        localStorage.setItem('denis_clientes', JSON.stringify(clientes));
+        guardarOrdenClientes();
+        console.log("💾 Datos guardados:", clientes.length, "clientes");
+    }
+
+    function getTodayDate() { 
+        const hoy = new Date();
+        return `${hoy.getDate()}/${hoy.getMonth()+1}/${hoy.getFullYear()}`;
+    }
+    
+    function actualizarSumas() { 
+        let pag = 0, deu = 0; 
+        clientes.forEach(c => { 
+            if (c.estadoPago === "SI") pag += c.honorarios; 
+            else deu += c.honorarios; 
+        }); 
+        document.getElementById("sumaPagaron").innerHTML = `S/ ${formatNumberWithCommas(pag)}`; 
+        document.getElementById("sumaDeuda").innerHTML = `S/ ${formatNumberWithCommas(deu)}`; 
+        document.getElementById("sumaBolsa").innerHTML = `S/ ${formatNumberWithCommas(pag + deu)}`; 
+    }
+    
     function filtrarClientes() { let f = [...clientes]; if (currentFilter === "pagado") f = f.filter(c => c.estadoPago === "SI"); if (currentFilter === "deuda") f = f.filter(c => c.estadoPago === "NO"); if (currentSearchTerm.trim()) { const t = currentSearchTerm.toLowerCase(); f = f.filter(c => c.nombre.toLowerCase().includes(t) || (c.encargado && c.encargado.toLowerCase().includes(t)) || (c.telefono && c.telefono.toLowerCase().includes(t)) || (c.actividad && c.actividad.toLowerCase().includes(t))); } return f; }
     function escapeHtml(s) { if (!s) return ""; return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
@@ -524,7 +603,6 @@
         let html = "";
         filtered.forEach((c, idx) => {
             const estadoSpan = c.estadoPago === "SI" ? `<span class="badge-pagado"><i class="fas fa-check-circle"></i> PAGÓ</span>` : `<span class="badge-deuda"><i class="fas fa-hourglass-half"></i> DEUDA</span>`;
-            // WHATSAPP LINK
             const telefonoMostrar = c.telefono && c.telefono.trim() !== "" 
                 ? `<a href="https://wa.me/${c.telefono.replace(/\s/g, '').replace(/\+/g, '')}" target="_blank" style="color: #25D366; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="fab fa-whatsapp"></i> ${escapeHtml(c.telefono)}</a>` 
                 : "<span class='empty-field'>—</span>";
@@ -543,7 +621,7 @@
                             <button class="btn-icon editarClienteBtn" data-id="${c.id}" style="background: var(--accent-edit); color: white; border: none;"><i class="fas fa-edit"></i> Editar</button>
                             <button class="btn-icon eliminarBtn" data-id="${c.id}" style="color:var(--accent-danger);"><i class="fas fa-trash"></i> Eliminar</button>
                         </td>
-                    </tr>`;
+                     </tr>`;
         });
         tbody.innerHTML = html;
         attachEventButtons();
@@ -552,7 +630,7 @@
         actualizarSumas();
     }
 
-        function abrirModalEditarCliente(cliente) {
+    function abrirModalEditarCliente(cliente) {
         currentEditClienteId = cliente.id;
         document.getElementById("editNombre").value = cliente.nombre;
         document.getElementById("editEncargado").value = cliente.encargado || "";
@@ -564,34 +642,23 @@
     
     function guardarEdicionCliente() {
         if (currentEditClienteId === null) return;
-        
         const cliente = clientes.find(c => c.id === currentEditClienteId);
         if (!cliente) return;
-        
         const nuevoNombre = document.getElementById("editNombre").value.trim();
-        if (!nuevoNombre) {
-            alert("El nombre del cliente es obligatorio");
-            return;
-        }
-        
+        if (!nuevoNombre) { alert("El nombre del cliente es obligatorio"); return; }
         const nuevoHonorario = parseFloat(document.getElementById("editHonorario").value);
-        
         cliente.nombre = nuevoNombre;
         cliente.encargado = document.getElementById("editEncargado").value;
         cliente.telefono = document.getElementById("editTelefono").value;
         cliente.actividad = document.getElementById("editActividad").value;
-        
         if (!isNaN(nuevoHonorario) && nuevoHonorario !== cliente.honorarios) {
             cliente.honorarios = nuevoHonorario;
             if (cliente.pagosHistorial && cliente.pagosHistorial.length > 0) {
                 const pagosOrd = ordenarPagos(cliente.pagosHistorial);
-                if (pagosOrd[0]) {
-                    pagosOrd[0].monto = nuevoHonorario;
-                }
+                if (pagosOrd[0]) pagosOrd[0].monto = nuevoHonorario;
             }
             recalcularEstadoActual(cliente);
         }
-        
         guardarDatos();
         renderTabla();
         cerrarModalEditarCliente();
@@ -607,10 +674,6 @@
         const rows = document.querySelectorAll(".draggable-row");
         rows.forEach(row => {
             const idx = parseInt(row.getAttribute("data-idx"));
-            row.removeEventListener("dragstart", (e) => handleDragStart(e, idx));
-            row.removeEventListener("dragend", handleDragEnd);
-            row.removeEventListener("dragover", handleDragOver);
-            row.removeEventListener("drop", (e) => handleDrop(e, idx));
             row.addEventListener("dragstart", (e) => handleDragStart(e, idx));
             row.addEventListener("dragend", handleDragEnd);
             row.addEventListener("dragover", handleDragOver);
@@ -621,24 +684,240 @@
     function attachEventButtons() {
         document.querySelectorAll('.verPagosBtn').forEach(btn => btn.addEventListener('click', () => { const id = parseInt(btn.dataset.id); const c = clientes.find(c => c.id === id); if (c) abrirModalPagos(c); }));
         document.querySelectorAll('.eliminarBtn').forEach(btn => btn.addEventListener('click', () => { const id = parseInt(btn.dataset.id); if (confirm("¿Eliminar?")) { clientes = clientes.filter(c => c.id !== id); guardarDatos(); renderTabla(); } }));
-                document.querySelectorAll('.editarClienteBtn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = parseInt(btn.getAttribute('data-id'));
-                const cliente = clientes.find(c => c.id === id);
-                if (cliente) abrirModalEditarCliente(cliente);
-            });
-        });
+        document.querySelectorAll('.editarClienteBtn').forEach(btn => btn.addEventListener('click', () => { const id = parseInt(btn.dataset.id); const c = clientes.find(c => c.id === id); if (c) abrirModalEditarCliente(c); }));
     }
 
     function abrirModalPagos(c) { currentClientForModal = c; actualizarInfoModal(); actualizarListaPagosModal(c); document.getElementById("modalPagos").classList.add("active"); }
-    function actualizarInfoModal() { if (!currentClientForModal) return; document.getElementById("modalClienteNombre").innerHTML = `<strong>${escapeHtml(currentClientForModal.nombre)}</strong>`; document.getElementById("editHonorarioMonto").value = currentClientForModal.honorarios; const est = document.getElementById("estadoActualDisplay"); if (currentClientForModal.estadoPago === "SI") { est.innerHTML = '<i class="fas fa-check-circle"></i> PAGÓ'; est.className = "badge-pagado"; } else { est.innerHTML = '<i class="fas fa-hourglass-half"></i> DEUDA'; est.className = "badge-deuda"; } }
-    function actualizarListaPagosModal(c) { const cont = document.getElementById("listaPagosModal"); if (!c.pagosHistorial || c.pagosHistorial.length === 0) { cont.innerHTML = "<div style='text-align:center;padding:20px;'>Sin pagos</div>"; return; } let html = ""; ordenarPagos(c.pagosHistorial).forEach(p => { html += `<div class="pago-item"><div class="pago-info"><span>${p.fecha}</span><span>S/ ${formatNumberWithCommas(p.monto)}</span><span class="${p.tipo === 'PAGO' ? 'badge-pagado' : 'badge-deuda'}">${p.tipo === 'PAGO' ? '✅ PAGÓ' : '⚠️ DEUDA'}</span></div><div><button class="btn-icon editarPagoBtn" data-fecha="${p.fecha}" data-monto="${p.monto}" data-tipo="${p.tipo}">Editar</button><button class="btn-icon eliminarPagoBtn" data-fecha="${p.fecha}" data-monto="${p.monto}" data-tipo="${p.tipo}">Eliminar</button></div></div>`; }); cont.innerHTML = html; }
-    function abrirModalEditarPago(f, m, t) { currentEditPagoData = { fecha: f, monto: m, tipo: t }; let ff = ""; if (f) { const p = f.split('/'); if (p.length === 3) ff = `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`; } document.getElementById("editPagoFecha").value = ff; document.getElementById("editPagoMonto").value = m; document.getElementById("editPagoTipo").value = t; document.getElementById("modalEditarPago").classList.add("active"); }
-    function guardarEdicionPago() { if (!currentEditPagoData || !currentClientForModal) return; const nf = document.getElementById("editPagoFecha").value; const nm = parseFloat(document.getElementById("editPagoMonto").value); const nt = document.getElementById("editPagoTipo").value; if (isNaN(nm) || nm <= 0) { alert("Monto válido"); return; } let nfecha = ""; if (nf) { const p = nf.split('-'); nfecha = `${p[2]}/${p[1]}/${p[0]}`; } else { nfecha = currentEditPagoData.fecha; } const idx = currentClientForModal.pagosHistorial.findIndex(p => p.fecha === currentEditPagoData.fecha && p.monto === currentEditPagoData.monto && p.tipo === currentEditPagoData.tipo); if (idx !== -1) { currentClientForModal.pagosHistorial[idx] = { fecha: nfecha, monto: nm, tipo: nt }; recalcularEstadoActual(currentClientForModal); guardarDatos(); actualizarListaPagosModal(currentClientForModal); actualizarInfoModal(); renderTabla(); alert("Pago actualizado"); } cerrarModalEditarPago(); }
-    function cerrarModalEditarPago() { document.getElementById("modalEditarPago").classList.remove("active"); currentEditPagoData = null; }
-    function registrarPagoClienteActual(monto, fechaSel, estadoSel) { if (!currentClientForModal) return; if (isNaN(monto) || monto <= 0) { alert("Monto válido"); return; } let fechaPago, fechaDate; if (fechaSel) { const p = fechaSel.split('-'); fechaPago = `${p[2]}/${p[1]}/${p[0]}`; fechaDate = new Date(p[0], p[1]-1, p[2]); } else { fechaPago = getTodayDate(); fechaDate = getFechaCobro(); } const tipo = estadoSel === "SI" ? "PAGO" : "DEUDA"; const nuevo = { fecha: fechaPago, monto: parseFloat(monto), tipo: tipo }; currentClientForModal.pagosHistorial.push(nuevo); const pagosOrd = ordenarPagos(currentClientForModal.pagosHistorial); if (pagosOrd[0] === nuevo) { currentClientForModal.honorarios = parseFloat(monto); currentClientForModal.estadoPago = estadoSel; alert(`✅ Pago registrado: S/ ${formatNumberWithCommas(monto)}`); } else { alert(`✅ Pago registrado pero no es el más reciente`); } guardarDatos(); actualizarListaPagosModal(currentClientForModal); actualizarInfoModal(); renderTabla(); document.getElementById("montoPagoNuevo").value = ""; document.getElementById("fechaPagoNuevo").value = ""; document.getElementById("estadoPagoNuevo").value = "SI"; }
-    function actualizarHonorarioCliente() { if (currentClientForModal) { currentClientForModal.honorarios = parseFloat(document.getElementById("editHonorarioMonto").value); guardarDatos(); renderTabla(); alert("Honorario actualizado"); } }
-    function cambiarEstadoManual(nuevo) { if (currentClientForModal) { currentClientForModal.estadoPago = nuevo; guardarDatos(); actualizarInfoModal(); renderTabla(); alert(`Estado cambiado a ${nuevo === "SI" ? "PAGÓ" : "DEUDA"}`); } }
+    
+    function actualizarInfoModal() { 
+        if (!currentClientForModal) return; 
+        document.getElementById("modalClienteNombre").innerHTML = `<strong>${escapeHtml(currentClientForModal.nombre)}</strong>`; 
+        document.getElementById("editHonorarioMonto").value = currentClientForModal.honorarios; 
+        const est = document.getElementById("estadoActualDisplay"); 
+        if (currentClientForModal.estadoPago === "SI") { 
+            est.innerHTML = '<i class="fas fa-check-circle"></i> PAGÓ'; 
+            est.className = "badge-pagado"; 
+        } else { 
+            est.innerHTML = '<i class="fas fa-hourglass-half"></i> DEUDA'; 
+            est.className = "badge-deuda"; 
+        } 
+    }
+    
+    function actualizarListaPagosModal(c) { 
+        const cont = document.getElementById("listaPagosModal"); 
+        if (!c.pagosHistorial || c.pagosHistorial.length === 0) { 
+            cont.innerHTML = "<div style='text-align:center;padding:20px;'>Sin pagos</div>"; 
+            return; 
+        } 
+        let html = ""; 
+        const pagosOrdenados = [...c.pagosHistorial].sort((a, b) => {
+            const fa = stringToDate(a.fecha);
+            const fb = stringToDate(b.fecha);
+            if (!fa && !fb) return 0;
+            if (!fa) return 1;
+            if (!fb) return -1;
+            return fb - fa;
+        });
+        pagosOrdenados.forEach(p => { 
+            html += `<div class="pago-item">
+                        <div class="pago-info">
+                            <span>${p.fecha}</span>
+                            <span>S/ ${formatNumberWithCommas(p.monto)}</span>
+                            <span class="${p.tipo === 'PAGO' ? 'badge-pagado' : 'badge-deuda'}">${p.tipo === 'PAGO' ? '✅ PAGÓ' : '⚠️ DEUDA'}</span>
+                        </div>
+                        <div>
+                            <button class="btn-icon editarPagoBtn" data-fecha="${p.fecha}" data-monto="${p.monto}" data-tipo="${p.tipo}"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn-icon eliminarPagoBtn" data-fecha="${p.fecha}" data-monto="${p.monto}" data-tipo="${p.tipo}" style="color:var(--accent-danger);"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                        </div>
+                    </div>`; 
+        }); 
+        cont.innerHTML = html; 
+        
+        document.querySelectorAll('.editarPagoBtn').forEach(btn => { 
+            btn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                const fecha = btn.getAttribute('data-fecha'); 
+                const monto = parseFloat(btn.getAttribute('data-monto')); 
+                const tipo = btn.getAttribute('data-tipo'); 
+                abrirModalEditarPago(fecha, monto, tipo); 
+            }); 
+        }); 
+        
+        document.querySelectorAll('.eliminarPagoBtn').forEach(btn => { 
+            btn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                const fecha = btn.getAttribute('data-fecha'); 
+                const monto = parseFloat(btn.getAttribute('data-monto')); 
+                const tipo = btn.getAttribute('data-tipo'); 
+                if (confirm(`¿Eliminar ${tipo === "PAGO" ? "pago" : "deuda"} de S/ ${formatNumberWithCommas(monto)} del ${fecha}?`)) { 
+                    const index = currentClientForModal.pagosHistorial.findIndex(p => p.fecha === fecha && p.monto === monto && p.tipo === tipo); 
+                    if (index !== -1) { 
+                        currentClientForModal.pagosHistorial.splice(index, 1); 
+                        if (currentClientForModal.pagosHistorial.length === 0) {
+                            currentClientForModal.estadoPago = "NO";
+                        } else {
+                            const pagosOrd = [...currentClientForModal.pagosHistorial].sort((a, b) => {
+                                const fa = stringToDate(a.fecha);
+                                const fb = stringToDate(b.fecha);
+                                if (!fa && !fb) return 0;
+                                if (!fa) return 1;
+                                if (!fb) return -1;
+                                return fb - fa;
+                            });
+                            const pagoReciente = pagosOrd[0];
+                            if (pagoReciente) {
+                                currentClientForModal.estadoPago = pagoReciente.tipo === "PAGO" ? "SI" : "NO";
+                                currentClientForModal.honorarios = pagoReciente.monto;
+                            }
+                        }
+                        guardarDatos(); 
+                        actualizarListaPagosModal(currentClientForModal); 
+                        actualizarInfoModal(); 
+                        renderTabla(); 
+                        alert("Registro eliminado correctamente"); 
+                    } 
+                } 
+            }); 
+        }); 
+    }
+    
+    function abrirModalEditarPago(f, m, t) { 
+        currentEditPagoData = { fecha: f, monto: m, tipo: t }; 
+        let ff = ""; 
+        if (f) { 
+            const p = f.split('/'); 
+            if (p.length === 3) ff = `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`; 
+        } 
+        document.getElementById("editPagoFecha").value = ff; 
+        document.getElementById("editPagoMonto").value = m; 
+        document.getElementById("editPagoTipo").value = t; 
+        document.getElementById("modalEditarPago").classList.add("active"); 
+    }
+    
+    function guardarEdicionPago() { 
+        if (!currentEditPagoData || !currentClientForModal) return; 
+        const nf = document.getElementById("editPagoFecha").value; 
+        const nm = parseFloat(document.getElementById("editPagoMonto").value); 
+        const nt = document.getElementById("editPagoTipo").value; 
+        if (isNaN(nm) || nm <= 0) { alert("Monto válido"); return; } 
+        let nfecha = ""; 
+        if (nf) { 
+            const p = nf.split('-'); 
+            nfecha = `${p[2]}/${p[1]}/${p[0]}`; 
+        } else { 
+            nfecha = currentEditPagoData.fecha; 
+        } 
+        const idx = currentClientForModal.pagosHistorial.findIndex(p => p.fecha === currentEditPagoData.fecha && p.monto === currentEditPagoData.monto && p.tipo === currentEditPagoData.tipo); 
+        if (idx !== -1) { 
+            currentClientForModal.pagosHistorial[idx] = { fecha: nfecha, monto: nm, tipo: nt }; 
+            const pagosOrd = [...currentClientForModal.pagosHistorial].sort((a, b) => {
+                const fa = stringToDate(a.fecha);
+                const fb = stringToDate(b.fecha);
+                if (!fa && !fb) return 0;
+                if (!fa) return 1;
+                if (!fb) return -1;
+                return fb - fa;
+            });
+            const pagoReciente = pagosOrd[0];
+            if (pagoReciente) {
+                currentClientForModal.honorarios = pagoReciente.monto;
+                currentClientForModal.estadoPago = pagoReciente.tipo === "PAGO" ? "SI" : "NO";
+            }
+            guardarDatos(); 
+            actualizarListaPagosModal(currentClientForModal); 
+            actualizarInfoModal(); 
+            renderTabla(); 
+            alert("Pago actualizado correctamente"); 
+        } 
+        cerrarModalEditarPago(); 
+    }
+    
+    function cerrarModalEditarPago() { 
+        document.getElementById("modalEditarPago").classList.remove("active"); 
+        currentEditPagoData = null; 
+    }
+    
+    function registrarPagoClienteActual(monto, fechaSel, estadoSel) { 
+        if (!currentClientForModal) return; 
+        if (isNaN(monto) || monto <= 0) { alert("Monto válido"); return; } 
+        let fechaPago, fechaDate; 
+        if (fechaSel) { 
+            const p = fechaSel.split('-'); 
+            fechaPago = `${p[2]}/${p[1]}/${p[0]}`; 
+            fechaDate = new Date(p[0], p[1]-1, p[2]); 
+        } else { 
+            fechaPago = getTodayDate(); 
+            fechaDate = getFechaCobro(); 
+        } 
+        const tipo = estadoSel === "SI" ? "PAGO" : "DEUDA"; 
+        const nuevo = { fecha: fechaPago, monto: parseFloat(monto), tipo: tipo }; 
+        currentClientForModal.pagosHistorial.push(nuevo); 
+        const pagosOrd = [...currentClientForModal.pagosHistorial].sort((a, b) => {
+            const fa = stringToDate(a.fecha);
+            const fb = stringToDate(b.fecha);
+            if (!fa && !fb) return 0;
+            if (!fa) return 1;
+            if (!fb) return -1;
+            return fb - fa;
+        });
+        const pagoReciente = pagosOrd[0];
+        if (pagoReciente && pagoReciente === nuevo) { 
+            currentClientForModal.honorarios = parseFloat(monto); 
+            currentClientForModal.estadoPago = estadoSel; 
+        } 
+        guardarDatos(); 
+        actualizarListaPagosModal(currentClientForModal); 
+        actualizarInfoModal(); 
+        renderTabla(); 
+        document.getElementById("montoPagoNuevo").value = ""; 
+        document.getElementById("fechaPagoNuevo").value = ""; 
+        alert(`✅ ${tipo === "PAGO" ? "Pago" : "Deuda"} registrado: S/ ${formatNumberWithCommas(monto)} - ${fechaPago}`); 
+    }
+    
+    function actualizarHonorarioCliente() { 
+        if (currentClientForModal) { 
+            const nuevoHonorario = parseFloat(document.getElementById("editHonorarioMonto").value);
+            if (!isNaN(nuevoHonorario)) {
+                currentClientForModal.honorarios = nuevoHonorario;
+                if (currentClientForModal.pagosHistorial && currentClientForModal.pagosHistorial.length > 0) {
+                    const pagosOrd = ordenarPagos(currentClientForModal.pagosHistorial);
+                    if (pagosOrd[0]) pagosOrd[0].monto = nuevoHonorario;
+                }
+                guardarDatos(); 
+                renderTabla(); 
+                alert(`Honorario actualizado a S/ ${formatNumberWithCommas(nuevoHonorario)}`);
+            }
+        } 
+    }
+    
+    function cambiarEstadoManual(nuevo) { 
+        if (currentClientForModal) { 
+            currentClientForModal.estadoPago = nuevo; 
+            // Registrar un nuevo pago/deuda con la fecha actual
+            const fechaActual = getTodayDate();
+            const nuevoPago = {
+                fecha: fechaActual,
+                monto: currentClientForModal.honorarios,
+                tipo: nuevo === "SI" ? "PAGO" : "DEUDA"
+            };
+            if (!currentClientForModal.pagosHistorial) currentClientForModal.pagosHistorial = [];
+            currentClientForModal.pagosHistorial.push(nuevoPago);
+            // Ordenar pagos (más reciente primero)
+            currentClientForModal.pagosHistorial.sort((a, b) => {
+                const fa = stringToDate(a.fecha);
+                const fb = stringToDate(b.fecha);
+                if (!fa && !fb) return 0;
+                if (!fa) return 1;
+                if (!fb) return -1;
+                return fb - fa;
+            });
+            guardarDatos(); 
+            actualizarInfoModal(); 
+            renderTabla(); 
+            alert(`✅ Estado cambiado a ${nuevo === "SI" ? "PAGÓ" : "DEUDA"} - Se registró un ${nuevo === "SI" ? "pago" : "deuda"} con fecha ${fechaActual}`);
+        } 
+    }
+    
     function addNewClient(data) { const newId = nextId++; const nuevo = { id: newId, nombre: data.nombre, encargado: data.encargado || "", telefono: data.telefono || "", actividad: data.actividad || "", honorarios: parseFloat(data.honorarios) || 0, estadoPago: data.estadoPago, pagosHistorial: data.estadoPago === "SI" ? [{ fecha: getTodayDate(), monto: parseFloat(data.honorarios) || 0, tipo: "PAGO" }] : [] }; clientes.push(nuevo); guardarDatos(); renderTabla(); document.getElementById("formClienteCard").classList.remove("show"); limpiarFormulario(); }
     function limpiarFormulario() { document.getElementById("nuevoNombre").value = ""; document.getElementById("nuevoEncargado").value = ""; document.getElementById("nuevoTelefono").value = ""; document.getElementById("nuevoActividad").value = ""; document.getElementById("nuevoHonorario").value = "0"; document.getElementById("nuevoEstado").value = "SI"; }
     function updateStats() { document.getElementById("totalClientesStat").innerText = clientes.length; document.getElementById("totalPagaronStat").innerText = clientes.filter(c => c.estadoPago === "SI").length; document.getElementById("totalDeudaStat").innerText = clientes.filter(c => c.estadoPago === "NO").length; }
@@ -651,8 +930,9 @@
     document.getElementById("btnGuardarRespaldo").addEventListener("click", guardarRespaldo);
     document.getElementById("btnGuardarRespaldoModal").addEventListener("click", () => { guardarRespaldo(); mostrarListaRespaldos(); });
     document.getElementById("btnRestaurarRespaldo").addEventListener("click", abrirModalRespaldos);
-    document.getElementById("btnCerrarRespaldos").addEventListener("click", () => document.getElementById("modalRespaldos").classList.remove("active"));
-    document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { document.querySelectorAll(".tab").forEach(ta => ta.classList.remove("active")); t.classList.add("active"); const f = t.dataset.filter; currentFilter = f === "all" ? "all" : f === "pagado" ? "pagado" : "deuda"; renderTabla(); }));
+    document.getElementById("btnCerrarRespaldos").addEventListener("click", () => {
+        document.getElementById("modalRespaldos").classList.remove("active");
+    });    document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { document.querySelectorAll(".tab").forEach(ta => ta.classList.remove("active")); t.classList.add("active"); const f = t.dataset.filter; currentFilter = f === "all" ? "all" : f === "pagado" ? "pagado" : "deuda"; renderTabla(); }));
     document.getElementById("cerrarModalBtn").addEventListener("click", () => document.getElementById("modalPagos").classList.remove("active"));
     document.getElementById("btnRegistrarPago").addEventListener("click", () => { const m = parseFloat(document.getElementById("montoPagoNuevo").value); const f = document.getElementById("fechaPagoNuevo").value; const e = document.getElementById("estadoPagoNuevo").value; registrarPagoClienteActual(m, f, e); });
     document.getElementById("btnActualizarHonorario").addEventListener("click", actualizarHonorarioCliente);
@@ -660,16 +940,20 @@
     document.getElementById("btnCambiarDeuda").addEventListener("click", () => cambiarEstadoManual("NO"));
     document.getElementById("guardarEdicionPago").addEventListener("click", guardarEdicionPago);
     document.getElementById("cancelarEdicionPago").addEventListener("click", cerrarModalEditarPago);
-    window.addEventListener("click", e => { if (e.target === document.getElementById("modalPagos")) document.getElementById("modalPagos").classList.remove("active"); if (e.target === document.getElementById("modalEditarPago")) document.getElementById("modalEditarPago").classList.remove("active"); if (e.target === document.getElementById("modalRespaldos")) document.getElementById("modalRespaldos").classList.remove("active"); });
+    document.getElementById("guardarEditarClienteBtn").addEventListener("click", guardarEdicionCliente);
+    document.getElementById("cancelarEditarClienteBtn").addEventListener("click", cerrarModalEditarCliente);
     document.getElementById("mostrarFormBtn").addEventListener("click", () => document.getElementById("formClienteCard").classList.toggle("show"));
     document.getElementById("cancelarFormBtn").addEventListener("click", () => { document.getElementById("formClienteCard").classList.remove("show"); limpiarFormulario(); });
     document.getElementById("guardarClienteBtn").addEventListener("click", () => { const n = document.getElementById("nuevoNombre").value.trim(); if (!n) { alert("Nombre requerido"); return; } addNewClient({ nombre: n, encargado: document.getElementById("nuevoEncargado").value, telefono: document.getElementById("nuevoTelefono").value, actividad: document.getElementById("nuevoActividad").value, honorarios: document.getElementById("nuevoHonorario").value, estadoPago: document.getElementById("nuevoEstado").value }); });
     document.getElementById("btnVolverIndex").addEventListener("click", () => { window.location.href = "index.html"; });
-        document.getElementById("guardarEditarClienteBtn").addEventListener("click", guardarEdicionCliente);
-    document.getElementById("cancelarEditarClienteBtn").addEventListener("click", cerrarModalEditarCliente);
-    window.addEventListener("click", (e) => { 
-        if(e.target === document.getElementById("modalEditarCliente")) cerrarModalEditarCliente();
+    
+    window.addEventListener("click", e => { 
+        if (e.target === document.getElementById("modalPagos")) document.getElementById("modalPagos").classList.remove("active"); 
+        if (e.target === document.getElementById("modalEditarPago")) document.getElementById("modalEditarPago").classList.remove("active"); 
+        if (e.target === document.getElementById("modalRespaldos")) document.getElementById("modalRespaldos").classList.remove("active");
+        if (e.target === document.getElementById("modalEditarCliente")) cerrarModalEditarCliente();
     });
+
     cargarDatos();
     renderTabla();
 </script>

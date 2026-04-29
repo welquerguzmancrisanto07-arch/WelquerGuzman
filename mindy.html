@@ -1135,12 +1135,15 @@
     function ordenarPagos(pagos) {
         if (!pagos || pagos.length === 0) return [];
         return [...pagos].sort((a, b) => {
+            // Primero comparar por fecha
             const fechaA = stringToDate(a.fecha);
             const fechaB = stringToDate(b.fecha);
-            if (!fechaA && !fechaB) return 0;
+            if (!fechaA && !fechaB) return (b.timestamp || 0) - (a.timestamp || 0);
             if (!fechaA) return 1;
             if (!fechaB) return -1;
-            return fechaB - fechaA;
+            if (fechaA.getTime() !== fechaB.getTime()) return fechaB - fechaA;
+            // Si la fecha es igual, usar timestamp (más reciente primero)
+            return (b.timestamp || 0) - (a.timestamp || 0);
         });
     }
 
@@ -1486,8 +1489,9 @@
         guardarOrdenClientes();
     }
 
-    function getTodayDate() {
-        return formatFecha(getFechaCobro());
+    function getTodayDate() { 
+    const hoy = new Date();
+    return `${hoy.getDate()}/${hoy.getMonth()+1}/${hoy.getFullYear()}`;
     }
 
     function actualizarSumas() {
@@ -1888,11 +1892,40 @@
 
     function cambiarEstadoManual(nuevoEstado) {
         if (!currentClientForModal) return;
+        
+        // Cambiar el estado
         currentClientForModal.estadoPago = nuevoEstado;
+        
+        // Registrar un nuevo pago/deuda con la fecha actual
+        const fechaActual = getTodayDate();
+                const nuevoPago = {
+            fecha: fechaActual,
+            monto: currentClientForModal.honorarios,
+            tipo: nuevoEstado === "SI" ? "PAGO" : "DEUDA",
+            timestamp: Date.now()  // <-- Agrega esto
+        };
+        
+        if (!currentClientForModal.pagosHistorial) {
+            currentClientForModal.pagosHistorial = [];
+        }
+        currentClientForModal.pagosHistorial.push(nuevoPago);
+        
+        // Ordenar pagos (más reciente primero)
+         currentClientForModal.pagosHistorial.sort((a, b) => {
+            const fa = stringToDate(a.fecha);
+            const fb = stringToDate(b.fecha);
+            if (!fa && !fb) return (b.timestamp || 0) - (a.timestamp || 0);
+            if (!fa) return 1;
+            if (!fb) return -1;
+            if (fa.getTime() !== fb.getTime()) return fb - fa;
+            return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+        
         guardarDatos();
         actualizarInfoModal();
         renderTabla();
-        alert(`Estado cambiado a ${nuevoEstado === "SI" ? "PAGÓ" : "DEUDA"}`);
+        
+        alert(`✅ Estado cambiado a ${nuevoEstado === "SI" ? "PAGÓ" : "DEUDA"} - Se registró un ${nuevoEstado === "SI" ? "pago" : "deuda"} con fecha ${fechaActual}`);
     }
 
     function addNewClient(data) {
