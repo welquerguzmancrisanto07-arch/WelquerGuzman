@@ -6,6 +6,9 @@
     <title>Panel Corporativo · Gestión de Pagos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -114,6 +117,104 @@
 
         .main-logo img:hover {
             transform: scale(1.05);
+        }
+
+        /* ============ BUSCADOR GLOBAL ============ */
+        .global-search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            z-index: 2;
+        }
+
+        .global-search-input {
+            width: 100%;
+            padding: 14px 16px 14px 45px;
+            border-radius: 50px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .global-search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-results {
+            background: var(--bg-card);
+            border-radius: 20px;
+            margin-top: 10px;
+            max-height: 350px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .search-result-item:hover {
+            background: var(--bg-body);
+        }
+
+        .search-result-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .search-result-detail {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .search-result-user {
+            background: var(--accent-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
 
         .cards-grid {
@@ -284,6 +385,15 @@
         <span>Panel Corporativo - Sistema de Gestión</span>
     </div>
 
+    <!-- ============ BUSCADOR GLOBAL ============ -->
+    <div class="global-search-container">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="🔍 Buscar cliente por nombre, encargado, teléfono o actividad...">
+        </div>
+        <div id="globalSearchResults" class="search-results"></div>
+    </div>
+
     <div class="cards-grid">
         <!-- Denis -->
         <div class="user-card" data-user="denis">
@@ -334,6 +444,19 @@
 </div>
 
 <script>
+    // ============ CONFIGURACIÓN DE FIREBASE ============
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNx1-7OJGyvLlCKTbVG98n7tk-SYzlzhM",
+        authDomain: "welquerguzman-49e66.firebaseapp.com",
+        projectId: "welquerguzman-49e66",
+        storageBucket: "welquerguzman-49e66.firebasestorage.app",
+        messagingSenderId: "695315520427",
+        appId: "1:695315520427:web:3ca503a079ca17cf5310ee"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     // ============ MODO OSCURO ============
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
@@ -403,6 +526,127 @@
                 e.stopPropagation();
                 redirectTo(targetUser, userName);
             });
+        }
+    });
+
+    // ============ BUSCADOR GLOBAL ============
+    const usuariosConfig = [
+        { nombre: "Denis", archivo: "denis.html", coleccion: "denis" },
+        { nombre: "Mindy", archivo: "mindy.html", coleccion: "mindy" },
+        { nombre: "Nilton", archivo: "nilthon.html", coleccion: "nilthon" },
+        { nombre: "Yaritza", archivo: "yaritza.html", coleccion: "yaritza" }
+    ];
+
+    let todosLosClientes = [];
+    let busquedaTimeout;
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    async function cargarTodosLosClientes() {
+        todosLosClientes = [];
+        for (const usuario of usuariosConfig) {
+            try {
+                const doc = await db.collection(usuario.coleccion).doc("clientes").get();
+                if (doc.exists) {
+                    const clientes = doc.data().data;
+                    if (clientes && Array.isArray(clientes)) {
+                        clientes.forEach(cliente => {
+                            todosLosClientes.push({
+                                ...cliente,
+                                usuario: usuario.nombre,
+                                archivo: usuario.archivo
+                            });
+                        });
+                    }
+                }
+            } catch(e) {
+                console.error(`Error cargando ${usuario.nombre}:`, e);
+            }
+        }
+        console.log(`📦 Clientes cargados: ${todosLosClientes.length}`);
+    }
+
+    function buscarClientes(termino) {
+        if (!termino || termino.length < 2) return [];
+        const term = termino.toLowerCase();
+        return todosLosClientes.filter(cliente => 
+            (cliente.nombre && cliente.nombre.toLowerCase().includes(term)) ||
+            (cliente.encargado && cliente.encargado.toLowerCase().includes(term)) ||
+            (cliente.telefono && cliente.telefono.toLowerCase().includes(term)) ||
+            (cliente.actividad && cliente.actividad.toLowerCase().includes(term))
+        );
+    }
+
+    function mostrarResultados(resultados) {
+        const container = document.getElementById("globalSearchResults");
+        if (resultados.length === 0) {
+            container.style.display = "none";
+            return;
+        }
+        container.style.display = "block";
+        container.innerHTML = resultados.map(cliente => `
+            <div class="search-result-item" data-usuario="${cliente.usuario}" data-archivo="${cliente.archivo}" data-cliente-id="${cliente.id}">
+                <div style="flex:1;">
+                    <div class="search-result-name">${escapeHtml(cliente.nombre) || "—"}</div>
+                    <div class="search-result-detail">
+                        ${cliente.encargado ? `👤 ${escapeHtml(cliente.encargado)}` : ""}
+                        ${cliente.telefono ? ` 📞 ${escapeHtml(cliente.telefono)}` : ""}
+                        ${cliente.actividad ? ` 📁 ${escapeHtml(cliente.actividad)}` : ""}
+                    </div>
+                </div>
+                <div class="search-result-user">${cliente.usuario}</div>
+            </div>
+        `).join("");
+
+        document.querySelectorAll('.search-result-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const archivo = item.getAttribute('data-archivo');
+                const clienteId = item.getAttribute('data-cliente-id');
+                localStorage.setItem('clienteABuscar', clienteId);
+                window.location.href = archivo;
+            });
+        });
+    }
+
+    // Evento de búsqueda
+    const searchInput = document.getElementById("globalSearchInput");
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            clearTimeout(busquedaTimeout);
+            busquedaTimeout = setTimeout(async () => {
+                const termino = e.target.value.trim();
+                if (termino.length >= 2) {
+                    if (todosLosClientes.length === 0) {
+                        await cargarTodosLosClientes();
+                    }
+                    const resultados = buscarClientes(termino);
+                    mostrarResultados(resultados);
+                } else {
+                    document.getElementById("globalSearchResults").style.display = "none";
+                }
+            }, 300);
+        });
+    }
+
+    // Cargar clientes al inicio
+    cargarTodosLosClientes();
+
+    // Cerrar resultados al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        const container = document.getElementById("globalSearchResults");
+        const searchInputElement = document.getElementById("globalSearchInput");
+        if (container && searchInputElement) {
+            if (!searchInputElement.contains(e.target) && !container.contains(e.target)) {
+                container.style.display = "none";
+            }
         }
     });
 </script>

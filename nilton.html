@@ -6,7 +6,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Nilthon · Panel de Gestión de Clientes</title>
+    <title>Nilton · Panel de Gestión de Clientes</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -607,16 +607,15 @@
         }
 
         .modal-content {
-            background: var(--modal-bg);
-            max-width: 550px;
-            width: 90%;
-            border-radius: 36px;
-            padding: 28px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-light);
-        }
-
+    background: var(--modal-bg);
+    max-width: 750px;  /* ← cambia de 550px a 750px */
+    width: 95%;        /* ← cambia de 90% a 95% */
+    border-radius: 36px;
+    padding: 28px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 1px solid var(--border-light);
+}
         .modal-content h3, .modal-content h4 {
             color: var(--text-primary);
         }
@@ -708,19 +707,178 @@
             align-items: center;
         }
 
-        .edit-honorario input {
-            width: 110px;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-light);
-            background: var(--input-bg);
-            color: var(--text-primary);
-        }
+.edit-honorario input {
+    width: 150px;      /* ← cambia de 110px a 150px */
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    background: var(--input-bg);
+    color: var(--text-primary);
+}
 
         .estado-buttons {
             display: flex;
             gap: 8px;
             margin-top: 8px;
+        }
+
+                /* Estilos para Trabajos Extras - Modal */
+        .suma-extras { background: linear-gradient(135deg, #ec489a, #db2777); color: white; cursor: pointer; transition: transform 0.2s; }
+        .suma-extras:hover { transform: scale(1.02); }
+        .suma-extras i, .suma-extras strong, .suma-extras span { color: white; }
+        
+        /* Contenedor de la tabla - más ancho y mejor scroll */
+        .modal-extras-table-container { 
+            overflow-x: auto; 
+            margin-top: 20px; 
+            max-height: 55vh; 
+            overflow-y: auto; 
+            border-radius: 20px;
+        }
+        
+        /* Tabla más ancha y con mejor espaciado */
+        .extras-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 1300px;  /* ← aumentado de 1100px a 1300px */
+        }
+        
+        .extras-table th { 
+            text-align: left; 
+            padding: 14px 16px;  /* ← aumentado el padding */
+            background: var(--bg-card); 
+            font-weight: 700; 
+            color: var(--accent-primary); 
+            border-bottom: 2px solid var(--border-light); 
+            font-size: 0.85rem;  /* ← aumentado */
+            position: sticky; 
+            top: 0; 
+            background: var(--bg-card); 
+            z-index: 10;
+        }
+        
+        .extras-table td { 
+            padding: 12px 16px;  /* ← aumentado el padding */
+            border-bottom: 1px solid var(--border-light); 
+            font-size: 0.9rem;  /* ← aumentado */
+            color: var(--text-secondary); 
+        }
+        
+        /* Badges más legibles */
+        .badge-pagado-extra { 
+            background: var(--badge-pagado); 
+            color: var(--badge-pagado-text); 
+            padding: 5px 12px; 
+            border-radius: 40px; 
+            font-weight: 600; 
+            font-size: 0.75rem; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            white-space: nowrap;
+        }
+        
+        .badge-pendiente-extra { 
+            background: var(--badge-deuda); 
+            color: var(--badge-deuda-text); 
+            padding: 5px 12px; 
+            border-radius: 40px; 
+            font-weight: 600; 
+            font-size: 0.75rem; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            white-space: nowrap;
+        }
+        
+        /* Mensaje cuando no hay datos */
+        .empty-table-message { 
+            text-align: center; 
+            padding: 60px; 
+            color: var(--text-muted); 
+            font-size: 1.1rem; 
+        }
+        .empty-table-message i { 
+            font-size: 3rem; 
+            margin-bottom: 15px; 
+            opacity: 0.5; 
+            display: block; 
+        }
+        
+        /* Formulario dentro del modal - más ancho */
+        .form-extra-modal { 
+            background: var(--pagos-list-bg); 
+            border-radius: 24px; 
+            padding: 24px;  /* ← aumentado */
+            margin-bottom: 20px; 
+            border: 1px solid var(--border-light); 
+        }
+        
+        /* Grid del formulario - columnas más amplias */
+        .form-extra-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));  /* ← aumentado de 180px a 220px */
+            gap: 18px;  /* ← aumentado */
+            margin-bottom: 20px; 
+        }
+        
+        /* Botones del formulario */
+        .btn-extra-primary { 
+            background: var(--accent-primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 30px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 0.85rem;
+        }
+        
+        .btn-extra-cancel { 
+            background: var(--text-muted); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 30px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 0.85rem;
+        }
+        
+        /* Botón de agregar trabajo */
+        .btn-agregar-extra-modal { 
+            background: var(--accent-success); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 40px; 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px; 
+            transition: 0.2s; 
+            margin-bottom: 15px; 
+        }
+        .btn-agregar-extra-modal:hover { 
+            transform: scale(1.02); 
+            filter: brightness(1.05); 
+        }
+        
+        /* Header del modal de trabajos extras */
+        .extras-header-modal { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            margin-bottom: 20px; 
+            gap: 16px; 
+        }
+        
+        /* Título del modal */
+        .extras-header-modal h3 {
+            font-size: 1.4rem;
         }
 
         .btn-estado {
@@ -752,21 +910,22 @@
         }
 
         .fila-pago {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
 
-        .fila-pago input, .fila-pago select {
-            flex: 1;
-            padding: 12px;
-            border-radius: 26px;
-            border: 1px solid var(--border-light);
-            background: var(--input-bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-        }
+.fila-pago input, .fila-pago select {
+    flex: 1;
+    padding: 12px;
+    border-radius: 26px;
+    border: 1px solid var(--border-light);
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    min-width: 120px;  /* ← AÑADE esta línea */
+}
 
         .empty-field {
             color: var(--text-muted);
@@ -858,7 +1017,7 @@
                 <img src="Nilton.jpeg" alt="Nilton">
             </div>
             <div class="admin-text">
-                <h2>Nilthon · Panel de Gestión</h2>
+                <h2>Nilton · Panel de Gestión</h2>
                 <p><i class="fas fa-check-circle"></i> Administración de clientes · Pagos · Historial financiero</p>
             </div>
         </div>
@@ -873,6 +1032,7 @@
         <div class="suma-item suma-pagado"><i class="fas fa-check-circle"></i> Total Pagado: <strong id="sumaPagaron">S/ 0.00</strong></div>
         <div class="suma-item suma-deuda"><i class="fas fa-hourglass-half"></i> Total Deuda: <strong id="sumaDeuda">S/ 0.00</strong></div>
         <div class="suma-item suma-bolsa"><i class="fas fa-chart-line"></i> Bolsa: <strong id="sumaBolsa">S/ 0.00</strong></div>
+        <div class="suma-item suma-extras" id="btnMostrarExtras" style="background: linear-gradient(135deg, #ec489a, #db2777); color: white; cursor: pointer;"><i class="fas fa-briefcase"></i> Trabajos Extras: <strong id="sumaExtras">S/ 0.00</strong></div>
     </div>
 
     <div class="search-section">
@@ -966,6 +1126,83 @@
             </div>
         </div>
         <button id="cerrarModalBtn" class="btn-icon" style="width:100%; margin-top:20px;">Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal de Edición de Trabajo Extra -->
+<div id="modalEditarExtra" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-edit"></i> Editar Trabajo Extra</h3>
+        <div class="form-extra-grid">
+            <div class="input-group"><label>RAZÓN SOCIAL</label><input type="text" id="editExtraRazonSocial"></div>
+            <div class="input-group"><label>NOMBRE DE CLIENTE</label><input type="text" id="editExtraNombreCliente"></div>
+            <div class="input-group"><label>TELÉFONO</label><input type="text" id="editExtraTelefono"></div>
+            <div class="input-group"><label>PRESUPUESTO (S/)</label><input type="number" id="editExtraPresupuesto" step="0.01"></div>
+            <div class="input-group"><label>CASO</label><input type="text" id="editExtraCaso"></div>
+            <div class="input-group"><label>FECHA INICIO</label><input type="date" id="editExtraFechaInicio"></div>
+            <div class="input-group"><label>ENTREGA</label><input type="date" id="editExtraEntrega"></div>
+            <div class="input-group"><label>PAGO A CUENTA (S/)</label><input type="number" id="editExtraPagoCuenta" step="0.01"></div>
+            <div class="input-group"><label>CANCELADO/PENDIENTE</label>
+                <select id="editExtraEstado"><option value="Pendiente">⏳ PENDIENTE</option><option value="Cancelado">✅ CANCELADO</option></select>
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+            <button id="cancelarEditarExtraBtn" class="btn-icon">Cancelar</button>
+            <button id="guardarEditarExtraBtn" class="btn-primary">Guardar cambios</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE TRABAJOS EXTRAS (VENTANA FLOTANTE) -->
+<div id="modalTrabajosExtras" class="modal">
+    <div class="modal-content">
+        <div class="extras-header-modal">
+            <h3><i class="fas fa-briefcase"></i> Trabajos Extras</h3>
+            <button id="btnAgregarExtraModal" class="btn-agregar-extra-modal"><i class="fas fa-plus-circle"></i> + Nuevo Trabajo</button>
+        </div>
+        
+        <div id="formExtraModal" class="form-extra-modal" style="display: none;">
+            <h4 style="margin-bottom: 15px;"><i class="fas fa-clipboard-list"></i> Registrar Trabajo Extra</h4>
+            <div class="form-extra-grid">
+                <div class="input-group"><label>RAZÓN SOCIAL</label><input type="text" id="extraRazonSocial" placeholder="Ej: EMPRESA SAC"></div>
+                <div class="input-group"><label>NOMBRE DE CLIENTE</label><input type="text" id="extraNombreCliente" placeholder="Nombre del contacto"></div>
+                <div class="input-group"><label>TELÉFONO (WhatsApp)</label><input type="text" id="extraTelefono" placeholder="+51 9xx xxx xxx"></div>
+                <div class="input-group"><label>PRESUPUESTO (S/)</label><input type="number" id="extraPresupuesto" step="0.01" value="0"></div>
+                <div class="input-group"><label>CASO</label><input type="text" id="extraCaso" placeholder="Ej: Desbalance Patrimonial"></div>
+                <div class="input-group"><label>FECHA INICIO</label><input type="date" id="extraFechaInicio"></div>
+                <div class="input-group"><label>ENTREGA</label><input type="date" id="extraEntrega"></div>
+                <div class="input-group"><label>PAGO A CUENTA (S/)</label><input type="number" id="extraPagoCuenta" step="0.01" value="0"></div>
+                <div class="input-group"><label>CANCELADO/PENDIENTE</label>
+                    <select id="extraEstado"><option value="Pendiente">⏳ PENDIENTE</option><option value="Cancelado">✅ CANCELADO</option></select>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button id="cancelarExtraModalBtn" class="btn-extra-cancel">Cancelar</button>
+                <button id="guardarExtraModalBtn" class="btn-extra-primary">Guardar Trabajo</button>
+            </div>
+        </div>
+        
+        <div class="modal-extras-table-container">
+            <table class="extras-table" id="extrasTableModal">
+                <thead>
+                    <tr>
+                        <th>RAZÓN SOCIAL</th>
+                        <th>NOMBRE DE CLIENTE</th>
+                        <th>TELÉFONO</th>
+                        <th>PRESUPUESTO</th>
+                        <th>CASO</th>
+                        <th>FECHA INICIO</th>
+                        <th>ENTREGA</th>
+                        <th>PAGO A CUENTA</th>
+                        <th>CANCELADO/PENDIENTE</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="extrasBodyModal"></tbody>
+            </table>
+        </div>
+        
+        <button id="cerrarExtrasModalBtn" class="btn-icon" style="width:100%; margin-top:20px;">Cerrar</button>
     </div>
 </div>
 
@@ -1178,24 +1415,27 @@
     const BACKUP_KEY = 'nilthon_backups';
     
     function guardarRespaldo() {
-        const respaldos = obtenerRespaldos();
-        const ahora = new Date();
-        const nombre = `Respaldo ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
-        
-        const nuevoRespaldo = {
-            id: Date.now(),
-            nombre: nombre,
-            fecha: ahora.toISOString(),
-            datos: JSON.parse(JSON.stringify(clientes))
-        };
-        
-        respaldos.unshift(nuevoRespaldo);
-        if (respaldos.length > 20) respaldos.pop();
-        
-        localStorage.setItem(BACKUP_KEY, JSON.stringify(respaldos));
-        alert(`✅ Respaldo guardado: ${nombre}`);
-        return nuevoRespaldo;
-    }
+    const respaldos = obtenerRespaldos();
+    const ahora = new Date();
+    const nombre = `Respaldo ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
+    
+    const nuevoRespaldo = {
+        id: Date.now(),
+        nombre: nombre,
+        fecha: ahora.toISOString(),
+        datos: {
+            clientes: JSON.parse(JSON.stringify(clientes)),
+            trabajosExtras: JSON.parse(JSON.stringify(trabajosExtras))
+        }
+    };
+    
+    respaldos.unshift(nuevoRespaldo);
+    if (respaldos.length > 20) respaldos.pop();
+    
+    localStorage.setItem(BACKUP_KEY, JSON.stringify(respaldos));
+    alert(`✅ Respaldo guardado: ${nombre}\n📦 Incluye: ${clientes.length} clientes y ${trabajosExtras.length} trabajos extras`);
+    return nuevoRespaldo;
+}
     
     function obtenerRespaldos() {
         const guardado = localStorage.getItem(BACKUP_KEY);
@@ -1210,24 +1450,47 @@
     }
     
     function restaurarRespaldo(respaldoId) {
-        const respaldos = obtenerRespaldos();
-        const respaldo = respaldos.find(r => r.id == respaldoId);
-        
-        if (!respaldo) {
-            alert("No se encontró el respaldo");
-            return false;
-        }
-        
-        if (confirm(`¿Restaurar respaldo "${respaldo.nombre}"?\n\n⚠️ ADVERTENCIA: Se perderán todos los cambios realizados después de este respaldo.`)) {
-            clientes = JSON.parse(JSON.stringify(respaldo.datos));
-            nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
-            guardarDatos();
-            renderTabla();
-            alert(`✅ Respaldo restaurado: ${respaldo.nombre}`);
-            return true;
-        }
+    const respaldos = obtenerRespaldos();
+    const respaldo = respaldos.find(r => r.id == respaldoId);
+    
+    if (!respaldo) {
+        alert("No se encontró el respaldo");
         return false;
     }
+    
+    if (!respaldo.datos || !respaldo.datos.clientes) {
+        alert("⚠️ El respaldo está corrupto o es de una versión anterior");
+        return false;
+    }
+    
+    if (confirm(`¿Restaurar respaldo "${respaldo.nombre}"?\n\n⚠️ ADVERTENCIA: Se perderán TODOS los cambios realizados después de este respaldo.\n\n📦 Contiene: ${respaldo.datos.clientes.length} clientes y ${respaldo.datos.trabajosExtras?.length || 0} trabajos extras`)) {
+        // Restaurar clientes
+        clientes = JSON.parse(JSON.stringify(respaldo.datos.clientes));
+        nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
+        
+        // Restaurar trabajos extras
+        if (respaldo.datos.trabajosExtras) {
+            trabajosExtras = JSON.parse(JSON.stringify(respaldo.datos.trabajosExtras));
+            if (trabajosExtras.length > 0) {
+                nextExtraId = Math.max(...trabajosExtras.map(t => t.id), 0) + 1;
+            } else {
+                nextExtraId = 1;
+            }
+        } else {
+            trabajosExtras = [];
+            nextExtraId = 1;
+        }
+        
+        guardarDatos();
+        guardarTrabajosExtras();
+        renderTabla();
+        renderTablaExtrasModal();
+        document.getElementById("modalRespaldos").classList.remove("active");
+        alert(`✅ Respaldo restaurado: ${respaldo.nombre}\n📦 Se recuperaron ${clientes.length} clientes y ${trabajosExtras.length} trabajos extras`);
+        return true;
+    }
+    return false;
+}
     
     function eliminarRespaldo(respaldoId) {
         if (confirm("¿Eliminar este respaldo permanentemente?")) {
@@ -1590,7 +1853,7 @@
             
             // WHATSAPP LINK - con formato mejorado
             const telefonoMostrar = c.telefono && c.telefono.trim() !== "" 
-            ? `<a href="https://wa.me/${c.telefono.replace(/\s/g, '').replace(/\+/g, '')}" target="_blank" style="color: #25D366; text-decoration: none; display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; padding: 4px 0;"><i class="fab fa-whatsapp" style="font-size: 1rem;"></i> <span style="letter-spacing: normal;">${escapeHtml(c.telefono)}</span></a>` 
+            ? `<a href="https://web.whatsapp.com/send?phone=${c.telefono.replace(/\s/g, '').replace(/\+/g, '')}" target="_blank" style="color: #25D366; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="fab fa-whatsapp"></i> ${escapeHtml(c.telefono)}</a>` 
             : "<span class='empty-field'>—</span>";
             const actividadMostrar = c.actividad && c.actividad.trim() !== "" ? escapeHtml(c.actividad) : "<span class='empty-field'>—</span>";
             const encargadoMostrar = c.encargado && c.encargado.trim() !== "" ? escapeHtml(c.encargado) : "<span class='empty-field'>—</span>";
@@ -2074,7 +2337,290 @@
         if(e.target === document.getElementById("modalEditarCliente")) cerrarModalEditarCliente();
     });
 
+    // Verificar si venimos del buscador
+    const urlParams = new URLSearchParams(window.location.search);
+    const clienteIdDesdeBusqueda = urlParams.get('cliente') || localStorage.getItem('clienteABuscar');
+    if (clienteIdDesdeBusqueda) {
+        localStorage.removeItem('clienteABuscar');
+        // Esperar a que carguen los datos
+        setTimeout(() => {
+            const cliente = clientes.find(c => c.id == clienteIdDesdeBusqueda);
+            if (cliente) {
+                abrirModalPagos(cliente);
+            }
+        }, 500);
+    }
+
+        // ============ SISTEMA DE TRABAJOS EXTRAS ============
+    let trabajosExtras = [];
+    let nextExtraId = 1;
+    let currentEditExtraId = null;
+    let formExtraVisibleModal = false;
+
+    async function cargarTrabajosExtras() {
+        try {
+            const doc = await db.collection(USUARIO).doc("trabajosExtras").get();
+            if (doc.exists) {
+                trabajosExtras = doc.data().data || [];
+                if (trabajosExtras.length > 0) {
+                    nextExtraId = Math.max(...trabajosExtras.map(t => t.id), 0) + 1;
+                }
+            }
+        } catch(e) {
+            console.error("Error cargando trabajos extras:", e);
+            trabajosExtras = [];
+        }
+        renderTablaExtrasModal();
+        actualizarSumaExtras();
+    }
+
+    async function guardarTrabajosExtras() {
+        try {
+            await db.collection(USUARIO).doc("trabajosExtras").set({ data: trabajosExtras });
+            actualizarSumaExtras();
+        } catch(e) {
+            console.error("Error guardando trabajos extras:", e);
+        }
+    }
+
+    function actualizarSumaExtras() {
+        let total = 0;
+        trabajosExtras.forEach(t => {
+            total += t.presupuesto || 0;
+        });
+        const sumaExtrasSpan = document.getElementById("sumaExtras");
+        if (sumaExtrasSpan) sumaExtrasSpan.innerHTML = `S/ ${formatNumberWithCommas(total)}`;
+    }
+
+    function renderTablaExtrasModal() {
+        const tbody = document.getElementById("extrasBodyModal");
+        if (!tbody) return;
+        
+        if (trabajosExtras.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" class="empty-table-message"><i class="fas fa-briefcase"></i>No hay trabajos extras registrados</td></tr>`;
+            return;
+        }
+        
+        let html = "";
+        trabajosExtras.forEach((t, idx) => {
+            const estadoSpan = t.estado === "Cancelado" 
+                ? `<span class="badge-pagado-extra"><i class="fas fa-check-circle"></i> CANCELADO</span>` 
+                : `<span class="badge-pendiente-extra"><i class="fas fa-hourglass-half"></i> PENDIENTE</span>`;
+            
+            const telefonoHtml = t.telefono && t.telefono.trim() !== "" 
+                ? `<a href="https://web.whatsapp.com/send?phone=${t.telefono.replace(/\s/g, '').replace(/\+/g, '')}" target="_blank" style="color: #25D366; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="fab fa-whatsapp"></i> ${escapeHtml(t.telefono)}</a>` 
+                : `<span class="empty-field">—</span>`;
+            
+            const saldoPendiente = (t.presupuesto || 0) - (t.pagoCuenta || 0);
+            const pagoCuentaMostrar = t.pagoCuenta ? `S/ ${formatNumberWithCommas(t.pagoCuenta)}` : "S/ 0.00";
+            const saldoMostrar = `<span style="font-weight:600; ${saldoPendiente > 0 ? 'color: var(--accent-warning);' : 'color: var(--accent-success);'}">Saldo: S/ ${formatNumberWithCommas(saldoPendiente)}</span>`;
+            
+            html += `<tr>
+                        <td style="font-weight:500;">${escapeHtml(t.razonSocial || "")}</td>
+                        <td>${escapeHtml(t.nombreCliente || "")}</td>
+                        <td>${telefonoHtml}</td>
+                        <td>S/ ${formatNumberWithCommas(t.presupuesto || 0)}</td>
+                        <td>${escapeHtml(t.caso || "")}</td>
+                        <td>${t.fechaInicio || "—"}</td>
+                        <td>${t.entrega || "—"}</td>
+                        <td>${pagoCuentaMostrar}<br><small style="font-size:0.7rem;">${saldoMostrar}</small></td>
+                        <td>${estadoSpan}</td>
+                        <td class="btn-actions">
+                            <button class="btn-icon editarExtraBtnModal" data-id="${t.id}"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn-icon eliminarExtraBtnModal" data-id="${t.id}" style="color:var(--accent-danger);"><i class="fas fa-trash"></i> Eliminar</button>
+                        </td>
+                      </tr>`;
+        });
+        tbody.innerHTML = html;
+        
+        document.querySelectorAll('.editarExtraBtnModal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id);
+                const extra = trabajosExtras.find(t => t.id === id);
+                if (extra) abrirModalEditarExtra(extra);
+            });
+        });
+        
+        document.querySelectorAll('.eliminarExtraBtnModal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id);
+                if (confirm("¿Eliminar este trabajo extra?")) {
+                    trabajosExtras = trabajosExtras.filter(t => t.id !== id);
+                    guardarTrabajosExtras();
+                    renderTablaExtrasModal();
+                    alert("Trabajo extra eliminado");
+                }
+            });
+        });
+    }
+
+    function agregarTrabajoExtra(data) {
+        const nuevo = {
+            id: nextExtraId++,
+            razonSocial: data.razonSocial || "",
+            nombreCliente: data.nombreCliente || "",
+            telefono: data.telefono || "",
+            presupuesto: parseFloat(data.presupuesto) || 0,
+            caso: data.caso || "",
+            fechaInicio: data.fechaInicio || "",
+            entrega: data.entrega || "",
+            pagoCuenta: parseFloat(data.pagoCuenta) || 0,
+            estado: data.estado || "Pendiente"
+        };
+        trabajosExtras.push(nuevo);
+        guardarTrabajosExtras();
+        renderTablaExtrasModal();
+        return true;
+    }
+
+    function actualizarTrabajoExtra(id, data) {
+        const index = trabajosExtras.findIndex(t => t.id === id);
+        if (index !== -1) {
+            trabajosExtras[index] = {
+                ...trabajosExtras[index],
+                razonSocial: data.razonSocial || "",
+                nombreCliente: data.nombreCliente || "",
+                telefono: data.telefono || "",
+                presupuesto: parseFloat(data.presupuesto) || 0,
+                caso: data.caso || "",
+                fechaInicio: data.fechaInicio || "",
+                entrega: data.entrega || "",
+                pagoCuenta: parseFloat(data.pagoCuenta) || 0,
+                estado: data.estado || "Pendiente"
+            };
+            guardarTrabajosExtras();
+            renderTablaExtrasModal();
+            return true;
+        }
+        return false;
+    }
+
+    function abrirModalEditarExtra(extra) {
+        currentEditExtraId = extra.id;
+        document.getElementById("editExtraRazonSocial").value = extra.razonSocial || "";
+        document.getElementById("editExtraNombreCliente").value = extra.nombreCliente || "";
+        document.getElementById("editExtraTelefono").value = extra.telefono || "";
+        document.getElementById("editExtraPresupuesto").value = extra.presupuesto || 0;
+        document.getElementById("editExtraCaso").value = extra.caso || "";
+        document.getElementById("editExtraFechaInicio").value = extra.fechaInicio || "";
+        document.getElementById("editExtraEntrega").value = extra.entrega || "";
+        document.getElementById("editExtraPagoCuenta").value = extra.pagoCuenta || 0;
+        document.getElementById("editExtraEstado").value = extra.estado || "Pendiente";
+        document.getElementById("modalEditarExtra").classList.add("active");
+    }
+
+    function cerrarModalEditarExtra() {
+        document.getElementById("modalEditarExtra").classList.remove("active");
+        currentEditExtraId = null;
+    }
+
+    // EVENTOS para modal de trabajos extras
+    const btnMostrarExtras = document.getElementById("btnMostrarExtras");
+    if (btnMostrarExtras) {
+        btnMostrarExtras.addEventListener("click", () => {
+            document.getElementById("modalTrabajosExtras").classList.add("active");
+        });
+    }
+
+    const cerrarExtrasBtn = document.getElementById("cerrarExtrasModalBtn");
+    if (cerrarExtrasBtn) {
+        cerrarExtrasBtn.addEventListener("click", () => {
+            document.getElementById("modalTrabajosExtras").classList.remove("active");
+        });
+    }
+
+    const btnAgregarExtra = document.getElementById("btnAgregarExtraModal");
+    if (btnAgregarExtra) {
+        btnAgregarExtra.addEventListener("click", () => {
+            const formExtra = document.getElementById("formExtraModal");
+            if (formExtra) {
+                formExtraVisibleModal = !formExtraVisibleModal;
+                formExtra.style.display = formExtraVisibleModal ? "block" : "none";
+                if (formExtraVisibleModal) {
+                    document.getElementById("extraRazonSocial").value = "";
+                    document.getElementById("extraNombreCliente").value = "";
+                    document.getElementById("extraTelefono").value = "";
+                    document.getElementById("extraPresupuesto").value = "";
+                    document.getElementById("extraCaso").value = "";
+                    document.getElementById("extraFechaInicio").value = new Date().toISOString().split('T')[0];
+                    document.getElementById("extraEntrega").value = "";
+                    document.getElementById("extraPagoCuenta").value = "";
+                    document.getElementById("extraEstado").value = "Pendiente";
+                }
+            }
+        });
+    }
+
+    const cancelarExtraBtn = document.getElementById("cancelarExtraModalBtn");
+    if (cancelarExtraBtn) {
+        cancelarExtraBtn.addEventListener("click", () => {
+            document.getElementById("formExtraModal").style.display = "none";
+            formExtraVisibleModal = false;
+        });
+    }
+
+    const guardarExtraBtn = document.getElementById("guardarExtraModalBtn");
+    if (guardarExtraBtn) {
+        guardarExtraBtn.addEventListener("click", () => {
+            const razonSocial = document.getElementById("extraRazonSocial").value.trim();
+            const nombreCliente = document.getElementById("extraNombreCliente").value.trim();
+            
+            if (!razonSocial && !nombreCliente) {
+                alert("Debe ingresar al menos Razón Social o Nombre de Cliente");
+                return;
+            }
+            
+            agregarTrabajoExtra({
+                razonSocial: razonSocial,
+                nombreCliente: nombreCliente,
+                telefono: document.getElementById("extraTelefono").value,
+                presupuesto: parseFloat(document.getElementById("extraPresupuesto").value) || 0,
+                caso: document.getElementById("extraCaso").value,
+                fechaInicio: document.getElementById("extraFechaInicio").value,
+                entrega: document.getElementById("extraEntrega").value,
+                pagoCuenta: parseFloat(document.getElementById("extraPagoCuenta").value) || 0,
+                estado: document.getElementById("extraEstado").value
+            });
+            document.getElementById("formExtraModal").style.display = "none";
+            formExtraVisibleModal = false;
+        });
+    }
+
+    // Editar trabajo extra
+    const guardarEditarExtra = document.getElementById("guardarEditarExtraBtn");
+    if (guardarEditarExtra) {
+        guardarEditarExtra.addEventListener("click", () => {
+            if (currentEditExtraId === null) return;
+            actualizarTrabajoExtra(currentEditExtraId, {
+                razonSocial: document.getElementById("editExtraRazonSocial").value,
+                nombreCliente: document.getElementById("editExtraNombreCliente").value,
+                telefono: document.getElementById("editExtraTelefono").value,
+                presupuesto: parseFloat(document.getElementById("editExtraPresupuesto").value) || 0,
+                caso: document.getElementById("editExtraCaso").value,
+                fechaInicio: document.getElementById("editExtraFechaInicio").value,
+                entrega: document.getElementById("editExtraEntrega").value,
+                pagoCuenta: parseFloat(document.getElementById("editExtraPagoCuenta").value) || 0,
+                estado: document.getElementById("editExtraEstado").value
+            });
+            cerrarModalEditarExtra();
+        });
+    }
+
+    const cancelarEditarExtra = document.getElementById("cancelarEditarExtraBtn");
+    if (cancelarEditarExtra) {
+        cancelarEditarExtra.addEventListener("click", cerrarModalEditarExtra);
+    }
+
+    // Cerrar modal al hacer clic fuera
+    window.addEventListener("click", e => {
+        const modalExtras = document.getElementById("modalTrabajosExtras");
+        const modalEditarExtra = document.getElementById("modalEditarExtra");
+        if (e.target === modalExtras) modalExtras.classList.remove("active");
+        if (e.target === modalEditarExtra) cerrarModalEditarExtra();
+    });
+
     cargarDatos();
+    cargarTrabajosExtras();
     renderTabla();
 </script>
 </body>
