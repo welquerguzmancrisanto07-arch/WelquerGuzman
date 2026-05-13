@@ -17,9 +17,8 @@
         }
 
         :root {
-            --bg-body: #eef2fa;
-            --bg-card: #ffffff;
-            --bg-table: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.88);
+            --bg-table: rgba(255, 255, 255, 0.85);
             --text-primary: #0a1c2f;
             --text-secondary: #1f4b6e;
             --text-muted: #5a7a9e;
@@ -27,90 +26,55 @@
             --accent-success: #10b981;
             --accent-danger: #ef4444;
             --accent-warning: #f59e0b;
-            --border-light: #cfdfed;
-            --border-card: #cfdfed;
-            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
-            --gradient-hero: linear-gradient(135deg, #1a4d3e 0%, #2a7a5e 100%);
+            --border-light: rgba(207, 223, 237, 0.7);
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+            --gradient-hero: linear-gradient(135deg, rgba(26, 77, 62, 0.9) 0%, rgba(42, 122, 94, 0.9) 100%);
             --badge-pagado: #c2f0dc;
             --badge-pagado-text: #136b4c;
             --badge-deuda: #ffe1cf;
             --badge-deuda-text: #c23d1c;
             --btn-back: #1f4b6e;
             --btn-back-hover: #0e3a52;
-            --input-bg: #fefefe;
-            --input-border: #cfdfed;
-            --modal-bg: #ffffff;
-            --pagos-list-bg: #f7fafd;
-            --info-cliente-bg: #eef3fc;
+            --input-bg: rgba(254, 254, 254, 0.9);
+            --input-border: rgba(207, 223, 237, 0.8);
+            --modal-bg: rgba(255, 255, 255, 0.95);
+            --pagos-list-bg: rgba(247, 250, 253, 0.9);
+            --info-cliente-bg: rgba(238, 243, 252, 0.9);
             --btn-reset: #dc2626;
             --btn-reset-hover: #b91c1c;
             --btn-backup: #8b5cf6;
             --btn-backup-hover: #7c3aed;
             --btn-restore: #f59e0b;
             --btn-restore-hover: #d97706;
-            --drag-over-bg: #dbeafe;
+            --drag-over-bg: rgba(219, 234, 254, 0.8);
             --accent-edit: #3b82f6;
             --btn-extras: #8b5cf6;
             --btn-extras-hover: #7c3aed;
         }
 
-        body.dark {
-            --bg-body: #0f1724;
-            --bg-card: #1a1f2e;
-            --bg-table: #1a1f2e;
-            --text-primary: #cbd5e6;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --accent-primary: #60a5fa;
-            --gradient-hero: linear-gradient(135deg, #0f3b2e 0%, #1e5a46 100%);
-            --badge-pagado: #1e5a46;
-            --badge-pagado-text: #6ee7b7;
-            --badge-deuda: #5c2a1a;
-            --badge-deuda-text: #fdba74;
-            --btn-back: #334155;
-            --btn-back-hover: #475569;
-            --input-bg: #1e293b;
-            --input-border: #334155;
-            --modal-bg: #1a1f2e;
-            --pagos-list-bg: #0f1724;
-            --info-cliente-bg: #0f1724;
-            --border-light: #334155;
-            --btn-reset: #dc2626;
-            --btn-reset-hover: #b91c1c;
-            --btn-backup: #8b5cf6;
-            --btn-backup-hover: #7c3aed;
-            --btn-restore: #f59e0b;
-            --btn-restore-hover: #d97706;
-            --drag-over-bg: #1e293b;
-            --btn-extras: #8b5cf6;
-            --btn-extras-hover: #7c3aed;
-        }
-
         body {
-            background: var(--bg-body);
+            background: url('fondoapp.jpeg') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Inter', sans-serif;
             padding: 24px 20px;
-            transition: background 0.3s ease, color 0.2s ease;
         }
 
-        .dashboard { max-width: 1500px; margin: 0 auto; }
+        .dashboard { max-width: 1900px; margin: 0 auto; }
         .header-with-back { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-        .btn-back { background: var(--btn-back); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-back { background: var(--btn-back); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; backdrop-filter: blur(4px); }
         .btn-back:hover { background: var(--btn-back-hover); transform: translateX(-3px); }
-        .theme-toggle-panel { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 60px; padding: 10px 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.85rem; color: var(--text-secondary); transition: all 0.2s; }
-        .theme-toggle-panel:hover { background: var(--accent-primary); color: white; }
-        .btn-reset { background: var(--btn-reset); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-reset { background: var(--btn-reset); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; backdrop-filter: blur(4px); }
         .btn-reset:hover { background: var(--btn-reset-hover); transform: scale(1.02); }
-        .btn-backup { background: var(--btn-backup); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-backup { background: var(--btn-backup); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; backdrop-filter: blur(4px); }
         .btn-backup:hover { background: var(--btn-backup-hover); transform: scale(1.02); }
-        .btn-restore { background: var(--btn-restore); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-restore { background: var(--btn-restore); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; backdrop-filter: blur(4px); }
         .btn-restore:hover { background: var(--btn-restore-hover); transform: scale(1.02); }
-        .btn-extras { background: var(--btn-extras); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-extras { background: var(--btn-extras); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; backdrop-filter: blur(4px); }
         .btn-extras:hover { background: var(--btn-extras-hover); transform: scale(1.02); }
         .button-group { display: flex; gap: 12px; flex-wrap: wrap; }
 
-        .admin-hero { background: var(--gradient-hero); border-radius: 32px; padding: 24px 32px; margin-bottom: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; box-shadow: var(--shadow-md); }
+        .admin-hero { background: var(--gradient-hero); border-radius: 32px; padding: 24px 32px; margin-bottom: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; box-shadow: var(--shadow-md); backdrop-filter: blur(4px); }
         .admin-info { display: flex; align-items: center; gap: 18px; }
         .admin-avatar { width: 70px; height: 70px; border-radius: 50%; overflow: hidden; box-shadow: 0 8px 14px rgba(0,0,0,0.2); background: #ffcf6e; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
         .admin-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -118,22 +82,102 @@
         .admin-text p { color: #cbdff2; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
 
         .stats-modern { display: flex; gap: 20px; flex-wrap: wrap; }
-        .stat-mod { background: rgba(255,255,255,0.12); backdrop-filter: blur(4px); border-radius: 40px; padding: 8px 20px; display: flex; align-items: center; gap: 12px; color: white; }
+        .stat-mod { background: rgba(255,255,255,0.15); backdrop-filter: blur(4px); border-radius: 40px; padding: 8px 20px; display: flex; align-items: center; gap: 12px; color: white; }
         .stat-mod i { font-size: 1.6rem; }
         .stat-mod span { font-weight: 700; font-size: 1.5rem; margin-right: 6px; }
+
+        /* ============ ASISTENTES SECTION ============ */
+        .asistentes-section {
+            margin-bottom: 28px;
+        }
+
+        .asistentes-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            display: inline-flex;
+            padding: 8px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-light);
+        }
+
+        .asistentes-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+
+        .asistente-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(4px);
+        }
+
+        .asistente-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .asistente-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .asistente-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .asistente-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        /* ============ CAPACIDAD SIGUIENTE RANGO ============ */
+        .suma-capacidad {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .suma-capacidad:hover {
+            transform: scale(1.02);
+        }
+        .suma-capacidad i, .suma-capacidad strong, .suma-capacidad span {
+            color: white;
+        }
 
         .search-section { margin-bottom: 20px; }
         .search-box { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
         .search-input-wrapper { flex: 1; position: relative; }
         .search-input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input { width: 100%; padding: 14px 16px 14px 45px; border-radius: 50px; border: 1px solid var(--input-border); background: var(--input-bg); font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--text-primary); transition: all 0.2s; }
+        .search-input { width: 100%; padding: 14px 16px 14px 45px; border-radius: 50px; border: 1px solid var(--input-border); background: var(--input-bg); font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--text-primary); transition: all 0.2s; backdrop-filter: blur(4px); }
         .search-input:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(29, 78, 107, 0.1); }
-        .btn-excel { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; }
+        .btn-excel { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; backdrop-filter: blur(4px); }
         .btn-excel:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
-        .suma-stats { background: var(--bg-card); border-radius: 40px; padding: 16px 24px; display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 24px; border: 1px solid var(--border-light); justify-content: center; }
+        .suma-stats { background: var(--bg-card); border-radius: 40px; padding: 16px 24px; display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 24px; border: 1px solid var(--border-light); justify-content: center; backdrop-filter: blur(8px); }
         .suma-item { color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 10px; padding: 8px 18px; border-radius: 50px; background: rgba(0,0,0,0.03); }
-        body.dark .suma-item { background: rgba(255,255,255,0.05); }
         .suma-item i { font-size: 1.2rem; }
         .suma-item strong { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); }
         .suma-pagado strong { color: var(--accent-success); }
@@ -147,10 +191,10 @@
         .suma-extras strong { color: white; }
 
         .action-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-        .floating-add-btn { background: var(--accent-primary); border: none; color: white; padding: 12px 24px; border-radius: 60px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; }
+        .floating-add-btn { background: var(--accent-primary); border: none; color: white; padding: 12px 24px; border-radius: 60px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; backdrop-filter: blur(4px); }
         .floating-add-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
 
-        .form-card { background: var(--bg-card); border-radius: 32px; padding: 24px; margin-bottom: 30px; border: 1px solid var(--border-light); display: none; }
+        .form-card { background: var(--bg-card); border-radius: 32px; padding: 24px; margin-bottom: 30px; border: 1px solid var(--border-light); display: none; backdrop-filter: blur(8px); }
         .form-card.show { display: block; animation: fadeIn 0.2s ease; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 20px; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
@@ -159,10 +203,10 @@
         .btn-primary { background: var(--accent-primary); color: white; border: none; padding: 12px 24px; border-radius: 32px; font-weight: 600; cursor: pointer; }
 
         .tabs { display: flex; gap: 12px; margin: 20px 0 20px; flex-wrap: wrap; }
-        .tab { background: var(--bg-card); border: 1px solid var(--border-light); padding: 10px 24px; border-radius: 100px; font-weight: 600; cursor: pointer; transition: 0.2s; color: var(--text-secondary); }
+        .tab { background: var(--bg-card); border: 1px solid var(--border-light); padding: 10px 24px; border-radius: 100px; font-weight: 600; cursor: pointer; transition: 0.2s; color: var(--text-secondary); backdrop-filter: blur(4px); }
         .tab.active { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
 
-        .table-container { background: var(--bg-table); border-radius: 32px; overflow-x: auto; border: 1px solid var(--border-light); margin-bottom: 30px; }
+        .table-container { background: var(--bg-table); border-radius: 32px; overflow-x: auto; border: 1px solid var(--border-light); margin-bottom: 30px; backdrop-filter: blur(8px); }
         .client-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         .client-table th { text-align: left; padding: 18px 16px; background: var(--bg-card); font-weight: 700; color: var(--accent-primary); border-bottom: 2px solid var(--border-light); font-size: 0.8rem; }
         .client-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-light); vertical-align: middle; font-size: 0.85rem; color: var(--text-secondary); }
@@ -176,13 +220,13 @@
         .badge-pagado { background: var(--badge-pagado); color: var(--badge-pagado-text); padding: 6px 12px; border-radius: 40px; font-weight: 700; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px; }
         .badge-deuda { background: var(--badge-deuda); color: var(--badge-deuda-text); padding: 6px 11px; border-radius: 40px; font-weight: 700; font-size: 0.7rem; }
         .btn-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-        .btn-icon { background: none; border: 1px solid var(--border-light); border-radius: 30px; padding: 5px 10px; font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: 0.1s; color: var(--text-secondary); }
+        .btn-icon { background: none; border: 1px solid var(--border-light); border-radius: 30px; padding: 5px 10px; font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: 0.1s; color: var(--text-secondary); background: rgba(255,255,255,0.5); backdrop-filter: blur(2px); }
         .btn-icon:hover { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
 
         /* Estilos para modales */
         .modal { position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: 0.2s; z-index: 1000; }
         .modal.active { visibility: visible; opacity: 1; }
-        .modal-content { background: var(--modal-bg); max-width: 95%; width: 1300px; border-radius: 36px; padding: 28px; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-light); }
+        .modal-content { background: var(--modal-bg); max-width: 95%; width: 1300px; border-radius: 36px; padding: 28px; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-light); backdrop-filter: blur(8px); }
         .modal-content h3, .modal-content h4 { color: var(--text-primary); margin-bottom: 16px; }
         
         /* Estilos tabla dentro del modal */
@@ -214,27 +258,93 @@
         .pago-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid var(--border-light); gap: 8px; flex-wrap: wrap; }
         .pago-info { flex: 1; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .info-cliente { background: var(--info-cliente-bg); padding: 15px; border-radius: 20px; margin-bottom: 12px; color: var(--text-primary); font-weight: 600; border: 1px solid var(--border-light); }
-        .info-row { display: flex; justify-content: space-between; margin: 12px 0; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--text-secondary); }
-        .edit-honorario { display: flex; gap: 8px; align-items: center; }
-        .edit-honorario input { width: 110px; padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-primary); }
-        .estado-buttons { display: flex; gap: 8px; margin-top: 8px; }
-        .btn-estado { flex: 1; padding: 10px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; border: none; }
-        .btn-pagado { background: var(--badge-pagado); color: var(--badge-pagado-text); }
-        .btn-deuda { background: var(--badge-deuda); color: var(--badge-deuda-text); }
-        .nuevo-pago-input { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-        .fila-pago { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .fila-pago input, .fila-pago select { flex: 1; padding: 12px; border-radius: 26px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-primary); font-family: 'Inter', sans-serif; }
-        .empty-field { color: var(--text-muted); font-style: italic; }
+        
+        /* ============ ESTILOS MEJORADOS PARA EL MODAL DE PAGOS (COMO MINDY) ============ */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
 
-        body.dark .modal-content, body.dark .modal-content * { color: #ffffff !important; }
-        body.dark .modal-content .badge-pagado, body.dark .modal-content .badge-deuda { color: #ffffff !important; }
-        body.dark .modal-content input, body.dark .modal-content select, body.dark .modal-content textarea { color: #ffffff !important; background-color: #2d3748 !important; border-color: #4a5568 !important; }
-        body.dark .modal-content input::placeholder, body.dark .modal-content textarea::placeholder { color: #a0aec0 !important; }
-        body.dark .modal-content .btn-icon, body.dark .modal-content .btn-primary { color: #ffffff !important; }
-        body.dark .modal-content .btn-primary { background-color: var(--accent-primary) !important; border-color: var(--accent-primary) !important; }
-        body.dark .modal-content .info-cliente { background: #2d3748 !important; border-color: #4a5568 !important; }
-        body.dark .modal-content .pagos-list { background: #1a202c !important; }
-        body.dark .backup-item { background: #1a202c !important; }
+        .edit-honorario {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .edit-honorario input {
+            width: 150px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .estado-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-estado {
+            flex: 1;
+            padding: 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            border: none;
+        }
+
+        .btn-pagado {
+            background: var(--badge-pagado);
+            color: var(--badge-pagado-text);
+        }
+
+        .btn-deuda {
+            background: var(--badge-deuda);
+            color: var(--badge-deuda-text);
+        }
+
+        .nuevo-pago-input {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .fila-pago {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .fila-pago input, .fila-pago select {
+            flex: 1;
+            padding: 12px;
+            border-radius: 26px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-width: 120px;
+        }
+
+        .edit-honorario input {
+            width: 150px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px);} to { opacity: 1; transform: translateY(0);} }
         @media (max-width: 768px) { .modal-content { width: 95%; padding: 20px; } .pago-info { flex-direction: column; align-items: flex-start; } }
@@ -248,10 +358,6 @@
             <button id="btnResetear" class="btn-reset"><i class="fas fa-sync-alt"></i> RESETEAR (23 del mes)</button>
             <button id="btnGuardarRespaldo" class="btn-backup"><i class="fas fa-database"></i> Guardar Respaldo</button>
             <button id="btnRestaurarRespaldo" class="btn-restore"><i class="fas fa-undo-alt"></i> Restaurar</button>
-            <div class="theme-toggle-panel" id="themeTogglePanel">
-                <i class="fas fa-moon"></i>
-                <span>Modo Oscuro</span>
-            </div>
         </div>
     </div>
 
@@ -272,10 +378,31 @@
         </div>
     </div>
 
+    <!-- ============ ASISTENTES SECTION ============ -->
+    <div class="asistentes-section">
+        <div class="asistentes-title">
+            <i class="fas fa-users"></i> Asistentes
+        </div>
+        <div class="asistentes-grid">
+            <!-- Marco -->
+            <div class="asistente-card">
+                <div class="asistente-avatar">
+                    <img src="Marco.jpeg" alt="Marco">
+                </div>
+                <div>
+                    <h4>Marco</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="suma-stats">
         <div class="suma-item suma-pagado"><i class="fas fa-check-circle"></i> Total Pagado: <strong id="sumaPagaron">S/ 0.00</strong></div>
         <div class="suma-item suma-deuda"><i class="fas fa-hourglass-half"></i> Total Deuda: <strong id="sumaDeuda">S/ 0.00</strong></div>
         <div class="suma-item suma-bolsa"><i class="fas fa-chart-line"></i> Bolsa: <strong id="sumaBolsa">S/ 0.00</strong></div>
+        <div class="suma-item suma-capacidad" id="btnMostrarCapacidad" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; cursor: pointer;">
+            <i class="fas fa-chart-line"></i> Capacidad siguiente rango: <strong id="capacidadRango">S/ 0.00</strong>
+        </div>
         <div class="suma-item suma-extras" id="btnMostrarExtras"><i class="fas fa-briefcase"></i> Trabajos Extras: <strong id="sumaExtras">S/ 0.00</strong></div>
     </div>
 
@@ -328,18 +455,47 @@
     </div>
 </div>
 
-<!-- Modal de Pagos -->
+<!-- Modal de Pagos (MEJORADO con los estilos de MINDY) -->
 <div id="modalPagos" class="modal">
     <div class="modal-content">
         <h3 style="margin-bottom: 16px;"><i class="fas fa-credit-card"></i> Gestión de Pagos</h3>
         <div id="modalClienteNombre" class="info-cliente"></div>
-        <div class="info-row"><span><strong>💰 Honorario actual:</strong></span><div class="edit-honorario"><input type="number" id="editHonorarioMonto" step="0.01"><button id="btnActualizarHonorario" class="btn-icon">Actualizar</button></div></div>
-        <div class="info-row"><span><strong>📊 Estado actual:</strong></span><span id="estadoActualDisplay" class="badge-pagado">PAGÓ</span></div>
-        <div class="estado-buttons"><button id="btnCambiarPagado" class="btn-estado btn-pagado"><i class="fas fa-check-circle"></i> Marcar como PAGÓ</button><button id="btnCambiarDeuda" class="btn-estado btn-deuda"><i class="fas fa-hourglass-half"></i> Marcar como DEUDA</button></div>
+        
+        <div class="info-row">
+            <span><strong>💰 Honorario actual:</strong></span>
+            <div class="edit-honorario">
+                <input type="number" id="editHonorarioMonto" step="0.01">
+                <button id="btnActualizarHonorario" class="btn-icon">Actualizar</button>
+            </div>
+        </div>
+        
+        <div class="info-row">
+            <span><strong>📊 Estado actual:</strong></span>
+            <span id="estadoActualDisplay" class="badge-pagado">PAGÓ</span>
+        </div>
+
+        <div class="estado-buttons">
+            <button id="btnCambiarPagado" class="btn-estado btn-pagado"><i class="fas fa-check-circle"></i> Marcar como PAGÓ</button>
+            <button id="btnCambiarDeuda" class="btn-estado btn-deuda"><i class="fas fa-hourglass-half"></i> Marcar como DEUDA</button>
+        </div>
+
         <h4 style="margin-top: 20px;"><i class="fas fa-history"></i> Historial de pagos</h4>
         <div id="listaPagosModal" class="pagos-list">Cargando...</div>
+        
         <h4 style="margin-top: 16px;"><i class="fas fa-plus-circle"></i> Registrar nuevo pago</h4>
-        <div class="nuevo-pago-input"><div class="fila-pago"><input type="number" id="montoPagoNuevo" placeholder="Monto S/." step="0.01"></div><div class="fila-pago"><input type="date" id="fechaPagoNuevo"><select id="estadoPagoNuevo"><option value="SI">✅ PAGÓ</option><option value="NO">⚠️ DEUDA</option></select><button id="btnRegistrarPago" class="btn-primary">+ Registrar</button></div></div>
+        <div class="nuevo-pago-input">
+            <div class="fila-pago">
+                <input type="number" id="montoPagoNuevo" placeholder="Monto S/." step="0.01">
+            </div>
+            <div class="fila-pago">
+                <input type="date" id="fechaPagoNuevo">
+                <select id="estadoPagoNuevo">
+                    <option value="SI">✅ PAGÓ</option>
+                    <option value="NO">⚠️ DEUDA</option>
+                </select>
+                <button id="btnRegistrarPago" class="btn-primary">+ Registrar</button>
+            </div>
+        </div>
         <button id="cerrarModalBtn" class="btn-icon" style="width:100%; margin-top:20px;">Cerrar</button>
     </div>
 </div>
@@ -504,23 +660,6 @@
     const db = firebase.firestore();
     const USUARIO = "denis";
 
-    // MODO OSCURO
-    const themeTogglePanel = document.getElementById('themeTogglePanel');
-    const body = document.body;
-    const savedTheme = localStorage.getItem('theme_app');
-    if (savedTheme === 'dark') { body.classList.add('dark'); updateThemeIconPanel(true); }
-    function updateThemeIconPanel(isDark) {
-        const icon = themeTogglePanel.querySelector('i');
-        const text = themeTogglePanel.querySelector('span');
-        if (isDark) { icon.className = 'fas fa-sun'; text.textContent = 'Modo Claro'; }
-        else { icon.className = 'fas fa-moon'; text.textContent = 'Modo Oscuro'; }
-    }
-    themeTogglePanel.addEventListener('click', () => {
-        const isDark = body.classList.toggle('dark');
-        localStorage.setItem('theme_app', isDark ? 'dark' : 'light');
-        updateThemeIconPanel(isDark);
-    });
-
     // TRABAJOS EXTRAS
     let trabajosExtras = [];
     let nextExtraId = 1;
@@ -559,7 +698,7 @@
     function renderTablaExtrasModal() {
         const tbody = document.getElementById("extrasBodyModal");
         if (trabajosExtras.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" class="empty-table-message"><i class="fas fa-briefcase"></i>No hay trabajos extras registrados</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="empty-table-message"><i class="fas fa-briefcase"></i>No hay trabajos extras registrados<\/td><\/tr>`;
             return;
         }
         let html = "";
@@ -577,19 +716,19 @@
             const saldoMostrar = `<span style="font-weight:600; ${saldoPendiente > 0 ? 'color: var(--accent-warning);' : 'color: var(--accent-success);'}">Saldo: S/ ${formatNumberWithCommas(saldoPendiente)}</span>`;
             
             html += `<tr>
-                        <td style="font-weight:500;">${escapeHtml(t.razonSocial || "")}</td>
-                        <td>${escapeHtml(t.nombreCliente || "")}</td>
-                        <td>${telefonoHtml}</td>
-                        <td>S/ ${formatNumberWithCommas(t.presupuesto || 0)}</td>
-                        <td>${escapeHtml(t.caso || "")}</td>
-                        <td>${t.fechaInicio || "—"}</td>
-                        <td>${t.entrega || "—"}</td>
-                        <td>${pagoCuentaMostrar}<br><small style="font-size:0.7rem;">${saldoMostrar}</small></td>
-                        <td>${estadoSpan}</td>
+                        <td style="font-weight:500;">${escapeHtml(t.razonSocial || "")}<\/td>
+                        <td>${escapeHtml(t.nombreCliente || "")}<\/td>
+                        <td>${telefonoHtml}<\/td>
+                        <td>S/ ${formatNumberWithCommas(t.presupuesto || 0)}<\/td>
+                        <td>${escapeHtml(t.caso || "")}<\/td>
+                        <td>${t.fechaInicio || "—"}<\/td>
+                        <td>${t.entrega || "—"}<\/td>
+                        <td>${pagoCuentaMostrar}<br><small style="font-size:0.7rem;">${saldoMostrar}</small><\/td>
+                        <td>${estadoSpan}<\/td>
                         <td class="btn-actions">
                             <button class="btn-icon editarExtraBtnModal" data-id="${t.id}"><i class="fas fa-edit"></i> Editar</button>
                             <button class="btn-icon eliminarExtraBtnModal" data-id="${t.id}" style="color:var(--accent-danger);"><i class="fas fa-trash"></i> Eliminar</button>
-                        </td>
+                        <\/td>
                       </tr>`;
         });
         tbody.innerHTML = html;
@@ -725,7 +864,6 @@
         if (guardado) { 
             try { 
                 const respaldos = JSON.parse(guardado);
-                // Migrar respaldos antiguos que solo tenían clientes
                 return respaldos.map(backup => {
                     if (backup.datos && !backup.datos.trabajosExtras) {
                         backup.datos.trabajosExtras = [];
@@ -752,11 +890,9 @@
         }
         
         if (confirm(`¿Restaurar respaldo "${respaldo.nombre}"?\n\n⚠️ ADVERTENCIA: Se perderán TODOS los cambios realizados después de este respaldo.\n\n📦 Contiene: ${respaldo.datos.clientes.length} clientes y ${respaldo.datos.trabajosExtras?.length || 0} trabajos extras`)) {
-            // Restaurar clientes
             clientes = JSON.parse(JSON.stringify(respaldo.datos.clientes));
             nextId = Math.max(...clientes.map(c => c.id), 0) + 1;
             
-            // Restaurar trabajos extras
             if (respaldo.datos.trabajosExtras) {
                 trabajosExtras = JSON.parse(JSON.stringify(respaldo.datos.trabajosExtras));
                 if (trabajosExtras.length > 0) {
@@ -769,7 +905,6 @@
                 nextExtraId = 1;
             }
             
-            // Guardar en Firebase
             guardarDatos();
             guardarTrabajosExtras();
             renderTabla();
@@ -945,7 +1080,7 @@
     function renderTabla() {
         const filtered = filtrarClientes();
         const tbody = document.getElementById("tablaBody");
-        if (filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;">✨ No hay clientes</td></tr>`; updateStats(); actualizarSumas(); return; }
+        if (filtered.length === 0) { tbody.innerHTML = `</tr><td colspan="8" style="text-align:center;padding:40px;">✨ No hay clientes<\/td><\/tr>`; updateStats(); actualizarSumas(); return; }
         let html = "";
         filtered.forEach((c, idx) => {
             const estadoSpan = c.estadoPago === "SI" ? `<span class="badge-pagado"><i class="fas fa-check-circle"></i> PAGÓ</span>` : `<span class="badge-deuda"><i class="fas fa-hourglass-half"></i> DEUDA</span>`;
@@ -955,25 +1090,26 @@
             const actividadMostrar = c.actividad && c.actividad.trim() !== "" ? escapeHtml(c.actividad) : "<span class='empty-field'>—</span>";
             const encargadoMostrar = c.encargado && c.encargado.trim() !== "" ? escapeHtml(c.encargado) : "<span class='empty-field'>—</span>";
             html += `<tr class="draggable-row" draggable="true" data-idx="${idx}" data-client-id="${c.id}">
-                        <td style="text-align:center;cursor:grab;"><i class="fas fa-grip-vertical drag-handle"></i></td>
-                        <td style="font-weight:600;">${escapeHtml(c.nombre)}</td>
-                        <td>${encargadoMostrar}</td>
-                        <td>${telefonoMostrar}</td>
-                        <td>${actividadMostrar}</td>
-                        <td>S/ ${formatNumberWithCommas(c.honorarios)}</td>
-                        <td>${estadoSpan}</td>
+                        <td style="text-align:center;cursor:grab;"><i class="fas fa-grip-vertical drag-handle"></i><\/td>
+                        <td style="font-weight:600;">${escapeHtml(c.nombre)}<\/td>
+                        <td>${encargadoMostrar}<\/td>
+                        <td>${telefonoMostrar}<\/td>
+                        <td>${actividadMostrar}<\/td>
+                        <td>S/ ${formatNumberWithCommas(c.honorarios)}<\/td>
+                        <td>${estadoSpan}<\/td>
                         <td class="btn-actions">
                             <button class="btn-icon verPagosBtn" data-id="${c.id}"><i class="fas fa-history"></i> Pagos</button>
                             <button class="btn-icon editarClienteBtn" data-id="${c.id}" style="background: var(--accent-edit); color: white; border: none;"><i class="fas fa-edit"></i> Editar</button>
                             <button class="btn-icon eliminarBtn" data-id="${c.id}" style="color:var(--accent-danger);"><i class="fas fa-trash"></i> Eliminar</button>
-                        </td>
-                      </tr>`;
+                        <\/td>
+                      <\/tr>`;
         });
         tbody.innerHTML = html;
         attachEventButtons();
         attachDragEvents();
         updateStats();
         actualizarSumas();
+        cargarCapacidadDesdeWelquer();
     }
 
     function abrirModalEditarCliente(cliente) {
@@ -1284,7 +1420,6 @@
         formExtraVisibleModal = !formExtraVisibleModal;
         if (formExtraVisibleModal) {
             formExtra.style.display = "block";
-            // Limpiar formulario
             document.getElementById("extraRazonSocial").value = "";
             document.getElementById("extraNombreCliente").value = "";
             document.getElementById("extraTelefono").value = "";
@@ -1328,10 +1463,8 @@
         formExtraVisibleModal = false;
     });
 
-    // EVENTOS para editar trabajo extra
     document.getElementById("guardarEditarExtraBtn").addEventListener("click", () => {
         if (currentEditExtraId === null) return;
-        
         actualizarTrabajoExtra(currentEditExtraId, {
             razonSocial: document.getElementById("editExtraRazonSocial").value,
             nombreCliente: document.getElementById("editExtraNombreCliente").value,
@@ -1357,9 +1490,23 @@
     document.getElementById("btnRestaurarRespaldo").addEventListener("click", abrirModalRespaldos);
     document.getElementById("btnCerrarRespaldos").addEventListener("click", () => {
         document.getElementById("modalRespaldos").classList.remove("active");
-    });    document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { document.querySelectorAll(".tab").forEach(ta => ta.classList.remove("active")); t.classList.add("active"); const f = t.dataset.filter; currentFilter = f === "all" ? "all" : f === "pagado" ? "pagado" : "deuda"; renderTabla(); }));
+    });
+    
+    document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { 
+        document.querySelectorAll(".tab").forEach(ta => ta.classList.remove("active")); 
+        t.classList.add("active"); 
+        const f = t.dataset.filter; 
+        currentFilter = f === "all" ? "all" : f === "pagado" ? "pagado" : "deuda"; 
+        renderTabla(); 
+    }));
+    
     document.getElementById("cerrarModalBtn").addEventListener("click", () => document.getElementById("modalPagos").classList.remove("active"));
-    document.getElementById("btnRegistrarPago").addEventListener("click", () => { const m = parseFloat(document.getElementById("montoPagoNuevo").value); const f = document.getElementById("fechaPagoNuevo").value; const e = document.getElementById("estadoPagoNuevo").value; registrarPagoClienteActual(m, f, e); });
+    document.getElementById("btnRegistrarPago").addEventListener("click", () => { 
+        const m = parseFloat(document.getElementById("montoPagoNuevo").value); 
+        const f = document.getElementById("fechaPagoNuevo").value; 
+        const e = document.getElementById("estadoPagoNuevo").value; 
+        registrarPagoClienteActual(m, f, e); 
+    });
     document.getElementById("btnActualizarHonorario").addEventListener("click", actualizarHonorarioCliente);
     document.getElementById("btnCambiarPagado").addEventListener("click", () => cambiarEstadoManual("SI"));
     document.getElementById("btnCambiarDeuda").addEventListener("click", () => cambiarEstadoManual("NO"));
@@ -1368,9 +1515,25 @@
     document.getElementById("guardarEditarClienteBtn").addEventListener("click", guardarEdicionCliente);
     document.getElementById("cancelarEditarClienteBtn").addEventListener("click", cerrarModalEditarCliente);
     document.getElementById("mostrarFormBtn").addEventListener("click", () => document.getElementById("formClienteCard").classList.toggle("show"));
-    document.getElementById("cancelarFormBtn").addEventListener("click", () => { document.getElementById("formClienteCard").classList.remove("show"); limpiarFormulario(); });
-    document.getElementById("guardarClienteBtn").addEventListener("click", () => { const n = document.getElementById("nuevoNombre").value.trim(); if (!n) { alert("Nombre requerido"); return; } addNewClient({ nombre: n, encargado: document.getElementById("nuevoEncargado").value, telefono: document.getElementById("nuevoTelefono").value, actividad: document.getElementById("nuevoActividad").value, honorarios: document.getElementById("nuevoHonorario").value, estadoPago: document.getElementById("nuevoEstado").value }); });
-    document.getElementById("btnVolverIndex").addEventListener("click", () => { window.location.href = "index.html"; });
+    document.getElementById("cancelarFormBtn").addEventListener("click", () => { 
+        document.getElementById("formClienteCard").classList.remove("show"); 
+        limpiarFormulario(); 
+    });
+    document.getElementById("guardarClienteBtn").addEventListener("click", () => { 
+        const n = document.getElementById("nuevoNombre").value.trim(); 
+        if (!n) { alert("Nombre requerido"); return; } 
+        addNewClient({ 
+            nombre: n, 
+            encargado: document.getElementById("nuevoEncargado").value, 
+            telefono: document.getElementById("nuevoTelefono").value, 
+            actividad: document.getElementById("nuevoActividad").value, 
+            honorarios: document.getElementById("nuevoHonorario").value, 
+            estadoPago: document.getElementById("nuevoEstado").value 
+        }); 
+    });
+    document.getElementById("btnVolverIndex").addEventListener("click", () => { 
+        window.location.href = "index.html"; 
+    });
     
     window.addEventListener("click", e => { 
         if (e.target === document.getElementById("modalPagos")) document.getElementById("modalPagos").classList.remove("active"); 
@@ -1392,6 +1555,41 @@
                 abrirModalPagos(cliente);
             }
         }, 500);
+    }
+
+    // ============ CARGAR CAPACIDAD DESDE WELQUER ============
+    let capacidadRangoActual = 0;
+
+    async function cargarCapacidadDesdeWelquer() {
+        try {
+            console.log("🔍 Buscando capacidad en welquer/controlCobros...");
+            const doc = await db.collection("welquer").doc("controlCobros").get();
+            
+            if (doc.exists) {
+                console.log("✅ Documento encontrado");
+                const data = doc.data();
+                const datosGuardados = data.data || [];
+                
+                console.log("📋 Lista de sectoristas:", datosGuardados.map(item => item.sectorista));
+                
+                const denisData = datosGuardados.find(item => item.sectorista === "DENIS");
+                
+                if (denisData && denisData.capacidadRango !== undefined) {
+                    capacidadRangoActual = denisData.capacidadRango;
+                    document.getElementById("capacidadRango").innerHTML = `S/ ${formatNumberWithCommas(capacidadRangoActual)}`;
+                    console.log(`✅ Capacidad Denis desde Welquer: ${capacidadRangoActual}`);
+                } else {
+                    console.warn("⚠️ No se encontró capacidad para DENIS");
+                    document.getElementById("capacidadRango").innerHTML = `S/ 0.00`;
+                }
+            } else {
+                console.warn("❌ Documento welquer/controlCobros NO EXISTE");
+                document.getElementById("capacidadRango").innerHTML = `S/ 0.00`;
+            }
+        } catch(e) {
+            console.error("❌ Error cargando capacidad:", e);
+            document.getElementById("capacidadRango").innerHTML = `S/ 0.00`;
+        }
     }
 
     cargarDatos();

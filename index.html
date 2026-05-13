@@ -17,35 +17,23 @@
         }
 
         :root {
-            --bg-body: #f1f5f9;
-            --bg-card: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.85);
             --text-primary: #0f172a;
             --text-secondary: #334155;
-            --text-muted: #64748b;
+            --text-muted: #475569;
             --accent-primary: #4f46e5;
             --accent-success: #10b981;
-            --border-light: #e2e8f0;
-            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
-            --gradient-logo: linear-gradient(135deg, #4f46e5, #7c3aed);
-        }
-
-        body.dark {
-            --bg-body: #0a0f1a;
-            --bg-card: #1a1f2e;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --accent-primary: #818cf8;
-            --border-light: #2d3a4e;
+            --border-light: rgba(226, 232, 240, 0.5);
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
         }
 
         body {
-            background: var(--bg-body);
+            background: url('fondoapp.jpeg') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             padding: 2rem;
-            transition: background 0.3s ease;
         }
 
         .container {
@@ -64,37 +52,21 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .loading-badge {
+            background: var(--accent-primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
         }
 
         .header-section {
             text-align: center;
             margin-bottom: 3rem;
             position: relative;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 60px;
-            padding: 0.7rem 1.3rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-
-        .theme-toggle:hover {
-            background: var(--accent-primary);
-            color: white;
         }
 
         .logo-wrapper {
@@ -150,6 +122,7 @@
             font-size: 0.9rem;
             color: var(--text-primary);
             transition: all 0.2s;
+            backdrop-filter: blur(4px);
         }
 
         .global-search-input:focus {
@@ -171,6 +144,7 @@
             left: 20px;
             right: 20px;
             z-index: 100;
+            backdrop-filter: blur(4px);
         }
 
         .search-result-item {
@@ -186,7 +160,7 @@
         }
 
         .search-result-item:hover {
-            background: var(--bg-body);
+            background: rgba(0,0,0,0.05);
         }
 
         .search-result-name {
@@ -217,6 +191,40 @@
             font-size: 0.85rem;
         }
 
+        /* ============ ESTADÍSTICAS DE CARGA ============ */
+        .stats-carga {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .stat-carga {
+            background: var(--bg-card);
+            padding: 6px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .stat-carga strong {
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .stat-carga i {
+            font-size: 0.8rem;
+        }
+
+        /* ============ TARJETAS DE USUARIOS ============ */
         .cards-grid {
             display: flex;
             flex-wrap: wrap;
@@ -236,6 +244,7 @@
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-light);
             position: relative;
+            backdrop-filter: blur(8px);
         }
 
         .user-card:hover {
@@ -321,9 +330,50 @@
             gap: 14px;
         }
 
+        /* Estilo especial para la tarjeta de Welquer (Jefe) */
+        .user-card.jefe-card {
+            border: 2px solid var(--accent-primary);
+            background: linear-gradient(135deg, var(--bg-card), rgba(79, 70, 229, 0.1));
+        }
+
+        .user-card.jefe-card .user-avatar {
+            border: 3px solid var(--accent-primary);
+        }
+
+        .badge-jefe {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--accent-primary);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 30px;
+            z-index: 5;
+        }
+
+        /* Botón de actualizar */
+        .btn-actualizar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .btn-actualizar:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
         .footer-section {
             text-align: center;
-            margin-top: 3rem;
+            margin-top: 2rem;
         }
 
         .footer-note {
@@ -335,6 +385,7 @@
             padding: 12px 32px;
             border-radius: 60px;
             border: 1px solid var(--border-light);
+            backdrop-filter: blur(4px);
         }
 
         @keyframes fadeUp {
@@ -351,13 +402,15 @@
         .user-card:nth-child(2) { animation-delay: 0.1s; }
         .user-card:nth-child(3) { animation-delay: 0.15s; }
         .user-card:nth-child(4) { animation-delay: 0.2s; }
+        .user-card:nth-child(5) { animation-delay: 0.25s; }
 
         @media (max-width: 768px) {
             body { padding: 1.5rem; }
             .user-card { width: 280px; padding: 1.8rem 1.5rem; }
             .user-avatar { width: 100px; height: 100px; }
-            .theme-toggle { position: relative; margin-bottom: 1rem; display: inline-flex; }
             .header-section { display: flex; flex-direction: column; align-items: center; }
+            .stats-carga { gap: 8px; }
+            .stat-carga { font-size: 0.65rem; padding: 4px 12px; }
         }
 
         @media (max-width: 580px) {
@@ -369,10 +422,6 @@
 <body>
 <div class="container">
     <div class="header-section">
-        <div class="theme-toggle" id="themeToggle">
-            <i class="fas fa-moon"></i>
-            <span>Modo Oscuro</span>
-        </div>
         <div class="logo-wrapper">
             <div class="main-logo">
                 <img src="logo WG.png" alt="Logo WG">
@@ -383,13 +432,19 @@
     <div class="sync-status" id="syncStatus">
         <i class="fas fa-check-circle"></i>
         <span>Panel Corporativo - Sistema de Gestión</span>
+        <button id="btnActualizarDatos" class="btn-actualizar"><i class="fas fa-sync-alt"></i> Actualizar</button>
+    </div>
+
+    <!-- ============ ESTADÍSTICAS DE CARGA ============ -->
+    <div class="stats-carga" id="statsCarga">
+        <div class="stat-carga"><i class="fas fa-spinner fa-pulse"></i> Cargando estadísticas...</div>
     </div>
 
     <!-- ============ BUSCADOR GLOBAL ============ -->
     <div class="global-search-container">
         <div class="search-input-wrapper">
             <i class="fas fa-search"></i>
-            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="🔍 Buscar cliente por nombre, encargado, teléfono o actividad...">
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Buscar cliente por nombre, encargado, teléfono o actividad...">
         </div>
         <div id="globalSearchResults" class="search-results"></div>
     </div>
@@ -415,7 +470,7 @@
             <button class="btn-access"><i class="fas fa-arrow-right"></i> Acceder al panel</button>
         </div>
 
-        <!-- Nilton  -->
+        <!-- Nilton -->
         <div class="user-card" data-user="nilton">
             <div class="user-avatar">
                 <img src="Nilton.jpeg" alt="Nilton">
@@ -432,6 +487,19 @@
             </div>
             <h3>Yaritza</h3>
             <p>Administración de clientes<br>y seguimiento de pagos</p>
+            <button class="btn-access"><i class="fas fa-arrow-right"></i> Acceder al panel</button>
+        </div>
+
+        <!-- Welquer Guzmán - Jefe de Gestión -->
+        <div class="user-card jefe-card" data-user="welquer">
+            <div class="badge-jefe">
+                <i class="fas fa-crown"></i> JEFE DE GESTIÓN
+            </div>
+            <div class="user-avatar">
+                <img src="Welquer.jpeg" alt="Welquer Guzmán">
+            </div>
+            <h3>Welquer Guzmán</h3>
+            <p>Supervisión general<br>y control de gestión</p>
             <button class="btn-access"><i class="fas fa-arrow-right"></i> Acceder al panel</button>
         </div>
     </div>
@@ -457,34 +525,15 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ============ MODO OSCURO ============
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-    
-    const savedTheme = localStorage.getItem('theme_app');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark');
-        updateThemeIcon(true);
-    }
-    
-    function updateThemeIcon(isDark) {
-        const icon = themeToggle.querySelector('i');
-        const text = themeToggle.querySelector('span');
-        if (isDark) {
-            icon.className = 'fas fa-sun';
-            text.textContent = 'Modo Claro';
-        } else {
-            icon.className = 'fas fa-moon';
-            text.textContent = 'Modo Oscuro';
-        }
-    }
-    
-    themeToggle.addEventListener('click', () => {
-        const isDark = body.classList.toggle('dark');
-        localStorage.setItem('theme_app', isDark ? 'dark' : 'light');
-        updateThemeIcon(isDark);
-    });
-    
+    // ============ CONFIGURACIÓN DE USUARIOS PARA ESTADÍSTICAS Y BÚSQUEDA ============
+    // Welquer NO está incluido aquí porque no tiene clientes
+    const usuariosConClientes = [
+        { nombre: "Denis", archivo: "denis.html", coleccion: "denis" },
+        { nombre: "Mindy", archivo: "mindy.html", coleccion: "mindy" },
+        { nombre: "Nilton", archivo: "nilton.html", coleccion: "nilton" },
+        { nombre: "Yaritza", archivo: "yaritza.html", coleccion: "yaritza" }
+    ];
+
     // ============ USUARIO ACTIVO ============
     const lastUser = localStorage.getItem('lastActiveUser');
     
@@ -507,7 +556,22 @@
     // ============ REDIRECCIÓN ============
     function redirectTo(usuario, userName) {
         localStorage.setItem('lastActiveUser', userName);
-        window.location.href = `${usuario}.html`;
+        
+        // Mapeo de redirecciones
+        const redirectMap = {
+            'denis': 'denis.html',
+            'mindy': 'mindy.html',
+            'nilton': 'nilton.html',
+            'yaritza': 'yaritza.html',
+            'welquer': 'welquer.html'
+        };
+        
+        const archivo = redirectMap[usuario];
+        if (archivo) {
+            window.location.href = archivo;
+        } else {
+            window.location.href = `${usuario}.html`;
+        }
     }
     
     const cards = document.querySelectorAll('.user-card');
@@ -529,15 +593,75 @@
         }
     });
 
-    // ============ BUSCADOR GLOBAL ============
-    const usuariosConfig = [
-        { nombre: "Denis", archivo: "denis.html", coleccion: "denis" },
-        { nombre: "Mindy", archivo: "mindy.html", coleccion: "mindy" },
-        { nombre: "Nilton", archivo: "nilthon.html", coleccion: "nilthon" },
-        { nombre: "Yaritza", archivo: "yaritza.html", coleccion: "yaritza" }
-    ];
+    // ============ FUNCIÓN PARA CONTAR CLIENTES POR USUARIO (SOLO LOS QUE TIENEN CLIENTES) ============
+    async function contarClientesPorUsuario() {
+        const statsContainer = document.getElementById('statsCarga');
+        if (!statsContainer) return;
+        
+        statsContainer.innerHTML = '<div class="stat-carga"><i class="fas fa-spinner fa-pulse"></i> Cargando estadísticas...</div>';
+        
+        const resultados = {};
+        
+        // Solo contar clientes para los usuarios que realmente tienen clientes
+        for (const usuario of usuariosConClientes) {
+            try {
+                const doc = await db.collection(usuario.coleccion).doc("clientes").get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    const clientes = data.data || [];
+                    resultados[usuario.nombre] = clientes.length;
+                    console.log(`📊 ${usuario.nombre}: ${clientes.length} clientes`);
+                } else {
+                    resultados[usuario.nombre] = 0;
+                    console.warn(`⚠️ ${usuario.nombre}: documento no encontrado`);
+                }
+            } catch(e) {
+                console.error(`❌ Error contando ${usuario.nombre}:`, e);
+                resultados[usuario.nombre] = 0;
+            }
+        }
+        
+        // Mostrar estadísticas (Welquer NO aparece)
+        let html = '';
+        for (const [nombre, cantidad] of Object.entries(resultados)) {
+            html += `<div class="stat-carga">
+                        <i class="fas fa-users"></i>
+                        <strong>${nombre}:</strong> ${cantidad} clientes
+                    </div>`;
+        }
+        
+        statsContainer.innerHTML = html;
+        
+        // Actualizar el estado general
+        const syncStatus = document.getElementById('syncStatus');
+        const total = Object.values(resultados).reduce((a, b) => a + b, 0);
+        syncStatus.innerHTML = `<i class="fas fa-check-circle"></i> <span>📊 ${total} clientes en total</span>
+                                <button id="btnActualizarDatos" class="btn-actualizar"><i class="fas fa-sync-alt"></i> Actualizar</button>`;
+        
+        // Reasignar evento al botón actualizar (por si se recreó)
+        const nuevoBtn = document.getElementById('btnActualizarDatos');
+        if (nuevoBtn) {
+            nuevoBtn.addEventListener('click', async () => {
+                const originalText = nuevoBtn.innerHTML;
+                nuevoBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Actualizando...';
+                nuevoBtn.disabled = true;
+                
+                await contarClientesPorUsuario();
+                
+                // Si hay texto en el buscador, volver a buscar
+                const searchTerm = document.getElementById('globalSearchInput').value.trim();
+                if (searchTerm.length >= 2) {
+                    const resultadosBusqueda = await buscarEnFirebase(searchTerm);
+                    mostrarResultados(resultadosBusqueda, searchTerm);
+                }
+                
+                nuevoBtn.innerHTML = originalText;
+                nuevoBtn.disabled = false;
+            });
+        }
+    }
 
-    let todosLosClientes = [];
+    // ============ BUSCADOR GLOBAL - SOLO BUSCA EN USUARIOS CON CLIENTES ============
     let busquedaTimeout;
 
     function escapeHtml(str) {
@@ -550,47 +674,87 @@
         });
     }
 
-    async function cargarTodosLosClientes() {
-        todosLosClientes = [];
-        for (const usuario of usuariosConfig) {
+    async function buscarEnFirebase(termino) {
+        if (!termino || termino.length < 2) {
+            return [];
+        }
+        
+        const term = termino.toLowerCase().trim();
+        const resultados = [];
+        
+        const syncStatus = document.getElementById('syncStatus');
+        const originalHTML = syncStatus.innerHTML;
+        syncStatus.innerHTML = `<i class="fas fa-spinner fa-pulse"></i> <span>🔍 Buscando "${termino}"...</span>
+                                <button id="btnActualizarDatos" class="btn-actualizar"><i class="fas fa-sync-alt"></i> Actualizar</button>`;
+        
+        // Solo buscar en usuarios que tienen clientes (Welquer NO se busca)
+        for (const usuario of usuariosConClientes) {
             try {
                 const doc = await db.collection(usuario.coleccion).doc("clientes").get();
+                
                 if (doc.exists) {
-                    const clientes = doc.data().data;
+                    const data = doc.data();
+                    const clientes = data.data || [];
+                    
                     if (clientes && Array.isArray(clientes)) {
                         clientes.forEach(cliente => {
-                            todosLosClientes.push({
-                                ...cliente,
-                                usuario: usuario.nombre,
-                                archivo: usuario.archivo
-                            });
+                            const coincide = 
+                                (cliente.nombre && cliente.nombre.toLowerCase().includes(term)) ||
+                                (cliente.encargado && cliente.encargado.toLowerCase().includes(term)) ||
+                                (cliente.telefono && cliente.telefono.toLowerCase().includes(term)) ||
+                                (cliente.actividad && cliente.actividad.toLowerCase().includes(term));
+                            
+                            if (coincide) {
+                                resultados.push({
+                                    ...cliente,
+                                    usuario: usuario.nombre,
+                                    archivo: usuario.archivo
+                                });
+                            }
                         });
                     }
                 }
             } catch(e) {
-                console.error(`Error cargando ${usuario.nombre}:`, e);
+                console.error(`Error buscando en ${usuario.nombre}:`, e);
             }
         }
-        console.log(`📦 Clientes cargados: ${todosLosClientes.length}`);
+        
+        syncStatus.innerHTML = originalHTML;
+        // Reasignar evento al botón actualizar
+        const btnActualizar = document.getElementById('btnActualizarDatos');
+        if (btnActualizar) {
+            btnActualizar.addEventListener('click', async () => {
+                const originalText = btnActualizar.innerHTML;
+                btnActualizar.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Actualizando...';
+                btnActualizar.disabled = true;
+                
+                await contarClientesPorUsuario();
+                
+                const searchTerm = document.getElementById('globalSearchInput').value.trim();
+                if (searchTerm.length >= 2) {
+                    const resultadosBusqueda = await buscarEnFirebase(searchTerm);
+                    mostrarResultados(resultadosBusqueda, searchTerm);
+                }
+                
+                btnActualizar.innerHTML = originalText;
+                btnActualizar.disabled = false;
+            });
+        }
+        
+        return resultados;
     }
 
-    function buscarClientes(termino) {
-        if (!termino || termino.length < 2) return [];
-        const term = termino.toLowerCase();
-        return todosLosClientes.filter(cliente => 
-            (cliente.nombre && cliente.nombre.toLowerCase().includes(term)) ||
-            (cliente.encargado && cliente.encargado.toLowerCase().includes(term)) ||
-            (cliente.telefono && cliente.telefono.toLowerCase().includes(term)) ||
-            (cliente.actividad && cliente.actividad.toLowerCase().includes(term))
-        );
-    }
-
-    function mostrarResultados(resultados) {
+    function mostrarResultados(resultados, busquedaActual) {
         const container = document.getElementById("globalSearchResults");
+        
         if (resultados.length === 0) {
-            container.style.display = "none";
+            container.style.display = "block";
+            container.innerHTML = `<div class="no-results">
+                <i class="fas fa-search"></i> No se encontraron resultados para "${escapeHtml(busquedaActual)}"
+            </div>`;
             return;
         }
+        
         container.style.display = "block";
         container.innerHTML = resultados.map(cliente => `
             <div class="search-result-item" data-usuario="${cliente.usuario}" data-archivo="${cliente.archivo}" data-cliente-id="${cliente.id}">
@@ -616,7 +780,7 @@
         });
     }
 
-    // Evento de búsqueda
+    // ============ EVENTO DE BÚSQUEDA ============
     const searchInput = document.getElementById("globalSearchInput");
     if (searchInput) {
         searchInput.addEventListener("input", (e) => {
@@ -624,20 +788,17 @@
             busquedaTimeout = setTimeout(async () => {
                 const termino = e.target.value.trim();
                 if (termino.length >= 2) {
-                    if (todosLosClientes.length === 0) {
-                        await cargarTodosLosClientes();
-                    }
-                    const resultados = buscarClientes(termino);
-                    mostrarResultados(resultados);
+                    const resultados = await buscarEnFirebase(termino);
+                    mostrarResultados(resultados, termino);
                 } else {
                     document.getElementById("globalSearchResults").style.display = "none";
                 }
-            }, 300);
+            }, 400);
         });
     }
 
-    // Cargar clientes al inicio
-    cargarTodosLosClientes();
+    // ============ INICIALIZAR ============
+    contarClientesPorUsuario();
 
     // Cerrar resultados al hacer clic fuera
     document.addEventListener('click', function(e) {

@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Welquer Guzmán · Control de Cobros</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-card: rgba(255, 255, 255, 0.88);
+            --bg-table: rgba(255, 255, 255, 0.85);
+            --text-primary: #0a1c2f;
+            --text-secondary: #1f4b6e;
+            --text-muted: #5a7a9e;
+            --accent-primary: #4f46e5;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --btn-back: #4f46e5;
+            --btn-back-hover: #6366f1;
+            --btn-guardar: #10b981;
+            --btn-guardar-hover: #059669;
+            --btn-recalcular: #f59e0b;
+            --btn-recalcular-hover: #d97706;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+            --border-light: rgba(207, 223, 237, 0.7);
+        }
+
+        body {
+            background: url('fondoapp.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .dashboard {
+            max-width: 1900px;
+            margin: 0 auto;
+        }
+
+        .header-with-back {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .btn-back {
+            background: var(--btn-back);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-back:hover {
+            background: var(--btn-back-hover);
+            transform: translateX(-3px);
+        }
+
+        .btn-guardar {
+            background: var(--btn-guardar);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-guardar:hover {
+            background: var(--btn-guardar-hover);
+            transform: scale(1.02);
+        }
+
+        .btn-recalcular {
+            background: var(--btn-recalcular);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-recalcular:hover {
+            background: var(--btn-recalcular-hover);
+            transform: scale(1.02);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-hero {
+            border-radius: 32px;
+            padding: 32px 40px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(4px);
+            background: linear-gradient(135deg, rgb(15, 7, 159) 0%, rgba(74, 77, 231, 0.85) 100%);
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .admin-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border: 3px solid white;
+        }
+
+        .admin-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .admin-text h2 {
+            color: white;
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .admin-text p {
+            color: #cbdff2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* ============ CONTROL DE COBROS ============ */
+        .cobros-section {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-light);
+        }
+
+        .cobros-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cobros-table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .cobros-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+            font-size: 0.85rem;
+        }
+
+        .cobros-table th {
+            text-align: center;
+            padding: 14px 12px;
+            background: var(--bg-card);
+            font-weight: 700;
+            color: var(--accent-primary);
+            border-bottom: 2px solid var(--border-light);
+            font-size: 0.8rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .cobros-table td {
+            text-align: center;
+            padding: 12px 12px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+
+        .cobros-table td.calculated-cell {
+            background-color: rgba(16, 185, 129, 0.08);
+            font-weight: 600;
+        }
+
+        .cobros-table td.editable-cell {
+            cursor: pointer;
+            background-color: rgba(245, 158, 11, 0.08);
+            transition: background 0.2s;
+        }
+
+        .cobros-table td.editable-cell:hover {
+            background-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .cobros-table input {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-primary);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .cobros-table .total-row {
+            background: rgba(79, 70, 229, 0.1);
+            font-weight: 700;
+        }
+
+        .cobros-table .total-row td {
+            font-weight: 700;
+            border-top: 2px solid var(--border-light);
+        }
+
+        .cobros-table .anual-row {
+            background: rgba(16, 185, 129, 0.1);
+            font-weight: 700;
+        }
+
+        .cobros-table .anual-row td {
+            font-weight: 700;
+        }
+
+        /* Tarjetas de verificación */
+        .stats-verificacion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .stat-verif {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 12px 20px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-light);
+            min-width: 150px;
+        }
+
+        .stat-verif .label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-verif .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-verif.verificado .value {
+            color: var(--accent-success);
+        }
+
+        .loading-overlay {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .fa-edit {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        .sueldos-footer {
+            text-align: center;
+            margin: 2rem auto 1rem auto;
+            padding: 1rem;
+        }
+
+        .sueldos-footer img {
+            max-width: 100%;
+            width: 1900px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--bg-card);
+            padding: 15px;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-light);
+        }
+
+        .sueldos-footer img:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        .footer-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer-note {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: var(--bg-card);
+            display: inline-block;
+            padding: 12px 32px;
+            border-radius: 60px;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1.5rem; }
+            .admin-avatar { width: 80px; height: 80px; }
+            .admin-text h2 { font-size: 1.3rem; }
+            .admin-hero { padding: 20px; }
+            .sueldos-footer img { max-width: 95%; width: auto; padding: 10px; }
+            .header-with-back { flex-direction: column; align-items: stretch; }
+            .button-group { justify-content: center; }
+            .stats-verificacion { gap: 10px; }
+            .stat-verif { padding: 8px 15px; min-width: 120px; }
+            .stat-verif .value { font-size: 1rem; }
+            .pagos-section { padding: 18px 16px; border-radius: 24px; }
+            .pagos-head-row { flex-direction: column; align-items: flex-start; }
+            .pagos-formula-bar { width: 100%; justify-content: flex-start; }
+        }
+
+        /* ============ CONTROL DE PAGOS ============ */
+        .pagos-section {
+            position: relative;
+            background: linear-gradient(155deg, rgba(255, 255, 255, 0.82) 0%, rgba(241, 245, 249, 0.9) 45%, rgba(255, 255, 255, 0.78) 100%);
+            border-radius: 28px;
+            padding: 28px 28px 32px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.92) inset,
+                0 28px 56px -16px rgba(15, 23, 42, 0.2),
+                0 14px 28px -10px rgba(67, 56, 202, 0.12);
+            overflow: hidden;
+        }
+
+        .pagos-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1 0%, #3b82f6 40%, #06b6d4 72%, #10b981 100%);
+            opacity: 0.95;
+            pointer-events: none;
+        }
+
+        .pagos-head-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px 24px;
+            margin-bottom: 6px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .pagos-title-block .pagos-main-title {
+            font-size: 1.38rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.035em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 6px 0;
+        }
+
+        .pagos-title-block .pagos-main-title i {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+            color: #fff;
+            font-size: 1.08rem;
+            box-shadow: 0 10px 28px rgba(79, 70, 229, 0.38);
+        }
+
+        .pagos-title-block .pagos-sub {
+            font-size: 0.81rem;
+            color: #64748b;
+            font-weight: 500;
+            max-width: 460px;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .pagos-formula-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pagos-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #334155;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+        }
+
+        .pagos-chip kbd {
+            font-family: 'Inter', ui-monospace, monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #3730a3;
+            background: rgba(99, 102, 241, 0.12);
+            padding: 3px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(99, 102, 241, 0.22);
+        }
+
+        .pagos-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px 20px;
+            margin: 10px 0 22px;
+        }
+
+        .pagos-toolbar-hint {
+            font-size: 0.78rem;
+            color: #64748b;
+            line-height: 1.45;
+            max-width: 540px;
+        }
+
+        .pagos-toolbar-hint strong { color: #475569; font-weight: 600; }
+
+        .btn-reset-pagos {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: #f8fafc;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.28);
+        }
+
+        .btn-reset-pagos:hover {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.32);
+        }
+
+        .btn-reset-pagos:active { transform: translateY(0); }
+
+        .pagos-table-container {
+            overflow-x: auto;
+            margin-bottom: 4px;
+            border-radius: 20px;
+            border: 1px solid rgba(15, 23, 42, 0.07);
+            background: rgba(255, 255, 255, 0.55);
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.07);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .pagos-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1100px;
+            font-size: 0.8rem;
+        }
+
+        .pagos-table thead th {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #f1f5f9;
+            font-weight: 700;
+            text-align: center;
+            padding: 15px 10px;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            letter-spacing: 0.07em;
+            font-size: 0.66rem;
+            text-transform: uppercase;
+        }
+
+        .pagos-table thead th:first-child { padding-left: 18px; }
+        .pagos-table thead th:last-child { padding-right: 18px; }
+
+        .pagos-table tbody td {
+            padding: 10px 8px;
+            border: none;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+            text-align: center;
+            vertical-align: middle;
+            color: #1e293b;
+            transition: background-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pagos-table tbody td,
+            .pagos-select-pulse,
+            .pagos-cell-flash { animation: none !important; transition: none !important; }
+        }
+
+        .pagos-table tbody tr:not(.total-row-pagos):hover td {
+            background-color: rgba(99, 102, 241, 0.045);
+        }
+
+        .pagos-table tbody tr:not(.total-row-pagos):hover td.imputacion-cell {
+            background: linear-gradient(180deg, rgba(224, 231, 255, 0.98) 0%, rgba(199, 210, 254, 0.88) 100%);
+        }
+
+        .pagos-table .gasto-nombre {
+            text-align: left;
+            font-weight: 600;
+            padding-left: 18px !important;
+            color: #0f172a;
+            background: rgba(248, 250, 252, 0.96);
+        }
+
+        .pagos-table .gasto-nombre.alt { background: rgba(241, 245, 249, 0.98); }
+
+        .pagos-table .gasto-costo-cell { background: rgba(255, 255, 255, 0.92); }
+        .pagos-table .gasto-costo-cell.alt { background: rgba(248, 250, 252, 0.96); }
+
+        .pagos-table .imputacion-cell {
+            background: linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 55%, #a5b4fc 100%);
+            font-weight: 800;
+            font-size: clamp(0.95rem, 1.4vw, 1.12rem);
+            color: #312e81;
+            letter-spacing: -0.02em;
+            box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.18);
+        }
+
+.pagos-table .total-row-pagos td {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
+    font-weight: 700;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 14px 12px;
+}
+
+        .pagos-table .total-row-pagos td.cell-empty {
+            background: rgba(30, 41, 59, 0.82) !important;
+            color: rgba(148, 163, 184, 0.45);
+        }
+
+        .pagos-table input.pagos-input-num,
+        .pagos-table input.pagos-input-text {
+            width: 100%;
+            max-width: 124px;
+            padding: 9px 11px;
+            border-radius: 11px;
+            border: 1px solid rgba(148, 163, 184, 0.42);
+            background: #fff;
+            color: #0f172a;
+            font-size: 0.78rem;
+            text-align: center;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+        }
+
+        .pagos-table input.pagos-input-text {
+            max-width: 142px;
+            text-align: left;
+        }
+
+        .pagos-table input.pagos-input-num:hover,
+        .pagos-table input.pagos-input-text:hover {
+            border-color: rgba(99, 102, 241, 0.45);
+        }
+
+        .pagos-table input.pagos-input-num:focus,
+        .pagos-table input.pagos-input-text:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.24);
+            transform: scale(1.02);
+        }
+
+        .pagos-table select.pagos-select {
+            width: 100%;
+            max-width: 158px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.45);
+            background: #fff;
+            color: #0f172a;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, background 0.25s ease, color 0.25s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        .pagos-table select.pagos-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.28);
+            transform: scale(1.03);
+        }
+
+        .pagos-table select.pagos-select-rango {
+            max-width: 188px;
+            border-radius: 11px;
+            font-weight: 500;
+        }
+
+        /* Estado (gastos): Pendiente = rojo, Pagado = verde */
+        .pagos-table select.pagos-select--estado.pagos-st-pendiente {
+            background-color: #fef2f2;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23b91c1c' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            color: #991b1b;
+            border-color: #f87171;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+        }
+
+        .pagos-table select.pagos-select--estado.pagos-st-ok {
+            background-color: #ecfdf5;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23059669' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            color: #047857;
+            border-color: #34d399;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Cancelado (personal): Pendiente = rojo, Cancelado = verde */
+        .pagos-table select.pagos-select--cancel.pagos-st-pendiente {
+            background-color: #fef2f2;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23b91c1c' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            color: #991b1b;
+            border-color: #f87171;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+        }
+
+        .pagos-table select.pagos-select--cancel.pagos-st-ok {
+            background-color: #ecfdf5;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23059669' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            color: #047857;
+            border-color: #34d399;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        @keyframes pagos-select-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.45); }
+            100% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        }
+
+        .pagos-select-pulse {
+            animation: pagos-select-pulse 0.5s ease-out;
+        }
+
+        @keyframes pagos-cell-flash {
+            0% { box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.65); }
+            100% { box-shadow: inset 0 0 0 0 transparent; }
+        }
+
+        .pagos-table .cell-calc.pagos-cell-flash {
+            animation: pagos-cell-flash 0.55s ease-out;
+        }
+
+        .pagos-table .cell-calc {
+            background: rgba(16, 185, 129, 0.11);
+            font-weight: 700;
+            color: #047857;
+            font-variant-numeric: tabular-nums;
+            transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pagos-table .cell-empty {
+            background: rgba(248, 250, 252, 0.65);
+        }
+
+        .pagos-table .sub-asist-sector {
+            background: linear-gradient(90deg, #2563eb 0%, #4f46e5 100%) !important;
+            color: #fff !important;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            font-size: 0.72rem;
+        }
+
+        .pagos-table .sub-asist-lab {
+            background: rgba(99, 102, 241, 0.14) !important;
+            font-weight: 700;
+            font-size: 0.65rem;
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pagos-table .cell-blank-personal {
+            background: rgba(241, 245, 249, 0.55);
+        }
+
+        .pagos-table .pendiente-neg {
+            color: #dc2626;
+            background: rgba(254, 226, 226, 0.55);
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <div class="header-with-back">
+        <button id="btnVolverIndex" class="btn-back"><i class="fas fa-arrow-left"></i> Volver al menú principal</button>
+        <div class="button-group">
+            <button id="btnGuardarCobros" class="btn-guardar"><i class="fas fa-save"></i> Guardar Cambios</button>
+            <button id="btnRecalcular" class="btn-recalcular"><i class="fas fa-chart-line"></i> Recalcular Bolsa/Pagado</button>
+        </div>
+    </div>
+
+    <div class="admin-hero">
+        <div class="admin-info">
+            <div class="admin-avatar">
+                <img src="Welquer.jpeg" alt="Welquer Guzmán">
+            </div>
+            <div class="admin-text">
+                <h2>Welquer Guzmán · Control de Cobros</h2>
+                <p><i class="fas fa-crown"></i> Jefe de Gestión · Supervisión general y control de gestión</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas de verificación de datos -->
+    <div class="stats-verificacion" id="statsVerificacion">
+        <div class="stat-verif">
+            <div class="label">TOTAL BOLSA</div>
+            <div class="value" id="totalBolsa">S/ 0.00</div>
+        </div>
+        <div class="stat-verif">
+            <div class="label">TOTAL PAGADO</div>
+            <div class="value" id="totalPagado">S/ 0.00</div>
+        </div>
+        <div class="stat-verif">
+            <div class="label">FALTA PAGAR</div>
+            <div class="value" id="totalFaltaPagar">S/ 0.00</div>
+        </div>
+    </div>
+
+    <!-- ============ CONTROL DE COBROS ============ -->
+    <div class="cobros-section">
+        <div class="cobros-title">
+            <i class="fas fa-chart-pie"></i> Control de Cobros
+        </div>
+        <div id="cobrosContainer">
+            <div class="loading-overlay">
+                <i class="fas fa-spinner fa-pulse"></i> Cargando datos...
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ CONTROL DE PAGOS ============ -->
+    <div class="pagos-section">
+        <div class="pagos-head-row">
+            <div class="pagos-title-block">
+                <h2 class="pagos-main-title"><i class="fas fa-money-check-alt" aria-hidden="true"></i> Control de Pagos</h2>
+            </div>
+        </div>
+        <div class="pagos-toolbar">
+            <button type="button" id="btnResetPagos" class="btn-reset-pagos"><i class="fas fa-rotate-left"></i> Resetear</button>
+        </div>
+        <div id="pagosContainer"></div>
+    </div>
+
+    <!-- ============ IMAGEN GRANDE DE SUELDOS AL FINAL ============ -->
+    <div class="sueldos-footer">
+        <img src="sueldos.png" alt="Sueldos - Control de pagos">
+    </div>
+
+    <div class="footer-section">
+        <div class="footer-note">
+            <i class="fas fa-building"></i> Welquer Guzmán · Gestión Empresarial · Administración, Contabilidad, Tributación y Legalidad
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatNumberWithCommas(number) {
+        return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function parseNumber(value) {
+        return parseFloat(value) || 0;
+    }
+
+    // ============ CONFIGURACIÓN DE FIREBASE ============
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNx1-7OJGyvLlCKTbVG98n7tk-SYzlzhM",
+        authDomain: "welquerguzman-49e66.firebaseapp.com",
+        projectId: "welquerguzman-49e66",
+        storageBucket: "welquerguzman-49e66.firebasestorage.app",
+        messagingSenderId: "695315520427",
+        appId: "1:695315520427:web:3ca503a079ca17cf5310ee"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Usuarios desde donde obtener BOLSA y PAGADO (ordenados como en la imagen)
+    const usuarios = [
+        { nombre: "YARITZA", coleccion: "yaritza", nombreMostrar: "Yaritza" },
+        { nombre: "NILTON", coleccion: "nilton", nombreMostrar: "Nilton" },
+        { nombre: "MINDY", coleccion: "mindy", nombreMostrar: "Mindy" },
+        { nombre: "DENIS", coleccion: "denis", nombreMostrar: "Denis" }
+    ];
+
+    // Datos del Control de Cobros
+    let datosCobros = [];
+    let editModeCell = null;
+
+    // ============ CONTROL DE PAGOS ============
+    const RANGO_OPCIONES = [
+        "base operativa",
+        "eficiencia controlada",
+        "productividad estable",
+        "desempeño destacado",
+        "eficiencia avanzada",
+        "alta productividad",
+        "desempeño estrategico",
+        "liderazgo estratégico"
+    ];
+
+    const GASTOS_DEFAULT = [
+        { key: "LUZ", nombre: "LUZ", costo: 600 },
+        { key: "AGUA", nombre: "AGUA", costo: 40 },
+        { key: "LIMPIEZA", nombre: "LIMPIEZA", costo: 250 },
+        { key: "ALQUILER", nombre: "ALQUILER", costo: 500 },
+        { key: "INTERNET", nombre: "INTERNET", costo: 150 },
+        { key: "TIENDA", nombre: "TIENDA", costo: 500 },
+        { key: "UTILIDAD_LIMPIEZA", nombre: "UTILIDAD LIMPIEZA", costo: 150 },
+        { key: "UTIL_ESCRIT", nombre: "UTIL. ESCRIT", costo: 150 },
+        { key: "ADMINISTRATIVA", nombre: "ADMINISTRATIVA", costo: 1200 }
+    ];
+
+    const FILAS_GASTO_CUERPO = GASTOS_DEFAULT.length;
+
+    const NOMBRE_ASIST_DEFAULT = ["MARCO", "MAGDELHI", "NANCY"];
+
+    const HON_SECTORISTA_DEFAULT = [3000, 3900, 2500, 3000];
+    const HON_ASISTENTE_DEFAULT = [1200, 1200, 1200];
+    let pagosDelegatedBound = false;
+
+    function escAttr(str) {
+        return String(str ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;");
+    }
+
+    function opcionesRangoHTML(valorSeleccionado) {
+        const selEmpty = !valorSeleccionado ? " selected" : "";
+        let h = `<option value=""${selEmpty}>— Rango —</option>`;
+        RANGO_OPCIONES.forEach((op) => {
+            const sel = valorSeleccionado === op ? " selected" : "";
+            h += `<option value="${escAttr(op)}"${sel}>${escAttr(op)}</option>`;
+        });
+        return h;
+    }
+
+    /**
+     * Normaliza arrays guardados (8, 9 o 10 filas) al orden actual de 9 filas.
+     * 10 filas (con fila en blanco): quita índice 3.
+     * 8 filas (sin LIMPIEZA): inserta LIMPIEZA por defecto tras AGUA.
+     */
+    function normalizarGastosGuardados(arr) {
+        if (!arr || !arr.length) return null;
+        const a = arr.slice();
+        if (a.length === 9) {
+            const blank = a[3] && (a[3].key === "BLANK" || a[3].nombre === "");
+            if (blank) {
+                return [a[0], a[1], a[2], a[4], a[5], a[6], a[7], a[8], a[9]];
+            }
+            return a;
+        }
+        if (a.length === 10) {
+            return [a[0], a[1], a[2], a[4], a[5], a[6], a[7], a[8], a[9]];
+        }
+        if (a.length === 8) {
+            const defLim = { key: "LIMPIEZA", nombre: "LIMPIEZA", costo: 250, estado: "Pendiente" };
+            return [a[0], a[1], defLim, a[2], a[3], a[4], a[5], a[6], a[7]];
+        }
+        return null;
+    }
+
+    function mergeControlPagos(saved) {
+        let srcGastos = saved && Array.isArray(saved.gastos) ? saved.gastos.slice() : null;
+        const adaptados = normalizarGastosGuardados(srcGastos);
+        if (adaptados) srcGastos = adaptados;
+
+        const gastos = GASTOS_DEFAULT.map((g, i) => {
+            const s = srcGastos && srcGastos[i] ? srcGastos[i] : {};
+            const costo =
+                s.costo != null && s.costo !== ""
+                    ? parseNumber(s.costo)
+                    : g.costo;
+            return {
+                key: g.key,
+                nombre: g.nombre,
+                costo,
+                estado: s.estado === "Pagado" || s.estado === "Pendiente" ? s.estado : "Pendiente"
+            };
+        });
+
+        const sectoristas = [0, 1, 2, 3].map((i) => {
+            const s = saved && saved.sectoristas && saved.sectoristas[i] ? saved.sectoristas[i] : {};
+            return {
+                nombre: s.nombre != null ? String(s.nombre) : "",
+                rango: s.rango != null ? String(s.rango) : "",
+                honorarios: s.honorarios != null ? parseNumber(s.honorarios) : HON_SECTORISTA_DEFAULT[i],
+                aCuenta: s.aCuenta != null ? parseNumber(s.aCuenta) : 0,
+                cancelado: s.cancelado === "Cancelado" || s.cancelado === "Pendiente" ? s.cancelado : "Pendiente"
+            };
+        });
+        const asistentes = [0, 1, 2].map((i) => {
+            const s = saved && saved.asistentes && saved.asistentes[i] ? saved.asistentes[i] : null;
+            const nomDef = NOMBRE_ASIST_DEFAULT[i] || "";
+            return {
+                nombre: s ? String(s.nombre ?? "") : nomDef,
+                rango: s && s.rango != null ? String(s.rango) : "",
+                honorarios:
+                    s && s.honorarios != null ? parseNumber(s.honorarios) : HON_ASISTENTE_DEFAULT[i],
+                aCuenta: s && s.aCuenta != null ? parseNumber(s.aCuenta) : 0,
+                cancelado:
+                    s && (s.cancelado === "Cancelado" || s.cancelado === "Pendiente")
+                        ? s.cancelado
+                        : "Pendiente"
+            };
+        });
+        return { gastos, sectoristas, asistentes };
+    }
+
+    function recolectarControlPagosDesdeDOM() {
+        const gastos = GASTOS_DEFAULT.map((row, idx) => {
+            const costInp = document.querySelector(`.gasto-costo[data-gasto-idx="${idx}"]`);
+            const est = document.querySelector(`.gasto-estado[data-gasto-idx="${idx}"]`);
+            return {
+                key: row.key,
+                nombre: row.nombre,
+                costo: parseNumber(costInp && costInp.value),
+                estado: est && est.value === "Pagado" ? "Pagado" : "Pendiente"
+            };
+        });
+        const sectoristas = [0, 1, 2, 3].map((idx) => {
+            const nombre = document.querySelector(`.pers-nombre[data-pers="s"][data-idx="${idx}"]`);
+            const rango = document.querySelector(`.pers-rango[data-pers="s"][data-idx="${idx}"]`);
+            const hon = document.querySelector(`.pers-honorarios[data-pers="s"][data-idx="${idx}"]`);
+            const ac = document.querySelector(`.pers-acuenta[data-pers="s"][data-idx="${idx}"]`);
+            const can = document.querySelector(`.pers-cancelado[data-pers="s"][data-idx="${idx}"]`);
+            return {
+                nombre: nombre ? nombre.value : "",
+                rango: rango ? rango.value : "",
+                honorarios: parseNumber(hon && hon.value),
+                aCuenta: parseNumber(ac && ac.value),
+                cancelado: can && can.value === "Cancelado" ? "Cancelado" : "Pendiente"
+            };
+        });
+        const asistentes = [0, 1, 2].map((idx) => {
+            const nombre = document.querySelector(`.pers-nombre[data-pers="a"][data-idx="${idx}"]`);
+            const rango = document.querySelector(`.pers-rango[data-pers="a"][data-idx="${idx}"]`);
+            const hon = document.querySelector(`.pers-honorarios[data-pers="a"][data-idx="${idx}"]`);
+            const ac = document.querySelector(`.pers-acuenta[data-pers="a"][data-idx="${idx}"]`);
+            const can = document.querySelector(`.pers-cancelado[data-pers="a"][data-idx="${idx}"]`);
+            return {
+                nombre: nombre ? nombre.value : "",
+                rango: rango ? rango.value : "",
+                honorarios: parseNumber(hon && hon.value),
+                aCuenta: parseNumber(ac && ac.value),
+                cancelado: can && can.value === "Cancelado" ? "Cancelado" : "Pendiente"
+            };
+        });
+        return { gastos, sectoristas, asistentes };
+    }
+
+    function sincronizarAparienciaSelectsPagos() {
+        document.querySelectorAll(".gasto-estado").forEach((sel) => {
+            sel.classList.remove("pagos-st-pendiente", "pagos-st-ok");
+            sel.classList.add(sel.value === "Pagado" ? "pagos-st-ok" : "pagos-st-pendiente");
+        });
+        document.querySelectorAll(".pers-cancelado").forEach((sel) => {
+            sel.classList.remove("pagos-st-pendiente", "pagos-st-ok");
+            sel.classList.add(sel.value === "Cancelado" ? "pagos-st-ok" : "pagos-st-pendiente");
+        });
+    }
+
+    function pulsarSelectPagos(el) {
+        if (!el || !el.classList) return;
+        el.classList.remove("pagos-select-pulse");
+        requestAnimationFrame(() => {
+            el.classList.add("pagos-select-pulse");
+            window.setTimeout(() => el.classList.remove("pagos-select-pulse"), 520);
+        });
+    }
+
+    function actualizarCalculosPagos() {
+        let totalCosto = 0;
+        document.querySelectorAll(".gasto-costo").forEach((inp) => {
+            totalCosto += parseNumber(inp.value);
+        });
+        const imputacion = totalCosto / 4;
+        const elImp = document.getElementById("pagosCeldaImputacion");
+        if (elImp) elImp.textContent = `S/ ${formatNumberWithCommas(imputacion)}`;
+
+        let sumHon = 0, sumAc = 0, sumPend = 0;
+
+        function filaPendiente(honInp, acInp, pendEl) {
+            const h = parseNumber(honInp && honInp.value);
+            const a = parseNumber(acInp && acInp.value);
+            const p = h - a;
+            if (pendEl) {
+                pendEl.textContent = `S/ ${formatNumberWithCommas(p)}`;
+                pendEl.classList.toggle("pendiente-neg", p < 0);
+            }
+            return { h, a, p };
+        }
+
+        [0, 1, 2, 3].forEach((idx) => {
+            const hon = document.querySelector(`.pers-honorarios[data-pers="s"][data-idx="${idx}"]`);
+            const ac = document.querySelector(`.pers-acuenta[data-pers="s"][data-idx="${idx}"]`);
+            const pend = document.querySelector(`.pers-pendiente[data-pers="s"][data-idx="${idx}"]`);
+            const r = filaPendiente(hon, ac, pend);
+            sumHon += r.h;
+            sumAc += r.a;
+            sumPend += r.p;
+        });
+        [0, 1, 2].forEach((idx) => {
+            const hon = document.querySelector(`.pers-honorarios[data-pers="a"][data-idx="${idx}"]`);
+            const ac = document.querySelector(`.pers-acuenta[data-pers="a"][data-idx="${idx}"]`);
+            const pend = document.querySelector(`.pers-pendiente[data-pers="a"][data-idx="${idx}"]`);
+            const r = filaPendiente(hon, ac, pend);
+            sumHon += r.h;
+            sumAc += r.a;
+            sumPend += r.p;
+        });
+
+        const tCost = document.getElementById("pagosFootTotalCosto");
+        const tHon = document.getElementById("pagosFootTotalHonorarios");
+        const tAc = document.getElementById("pagosFootTotalACuenta");
+        const tPend = document.getElementById("pagosFootTotalPendiente");
+        if (tCost) tCost.textContent = `S/ ${formatNumberWithCommas(totalCosto)}`;
+        if (tHon) tHon.textContent = `S/ ${formatNumberWithCommas(sumHon)}`;
+        if (tAc) tAc.textContent = `S/ ${formatNumberWithCommas(sumAc)}`;
+        if (tPend) {
+            tPend.textContent = `S/ ${formatNumberWithCommas(sumPend)}`;
+            tPend.classList.toggle("pendiente-neg", sumPend < 0);
+        }
+        sincronizarAparienciaSelectsPagos();
+    }
+
+    function renderizarControlPagos(saved) {
+        const m = mergeControlPagos(saved || null);
+        const numFilas = FILAS_GASTO_CUERPO;
+        let body = "";
+
+        function filaGastoBase(i, g, alt, tdImput, persCols) {
+            const nombreHtml =
+                g.nombre && String(g.nombre).trim() !== ""
+                    ? escAttr(g.nombre)
+                    : "&nbsp;";
+            const estSel = g.estado === "Pagado" ? "Pagado" : "Pendiente";
+            return `
+                <tr>
+                    <td class="gasto-nombre${alt}">${nombreHtml}</td>
+                    <td class="gasto-costo-cell${alt ? " alt" : ""}"><input type="number" step="0.01" class="pagos-input-num gasto-costo" data-gasto-idx="${i}" value="${escAttr(String(g.costo))}"></td>
+                    ${tdImput}
+                    <td><select class="pagos-select pagos-select--estado gasto-estado" data-gasto-idx="${i}">
+                        <option value="Pendiente"${estSel === "Pendiente" ? " selected" : ""}>Pendiente</option>
+                        <option value="Pagado"${estSel === "Pagado" ? " selected" : ""}>Pagado</option>
+                    </select></td>
+                    ${persCols}
+                </tr>`;
+        }
+
+        for (let i = 0; i < numFilas; i++) {
+            const g = m.gastos[i];
+            const alt = i % 2 === 1 ? " alt" : "";
+            const tdImput =
+                i === 0
+                    ? `<td rowspan="${numFilas}" class="imputacion-cell" id="pagosCeldaImputacion">S/ 0.00</td>`
+                    : "";
+
+            let persCols = "";
+
+            if (i <= 3) {
+                const s = m.sectoristas[i];
+                persCols = `
+                    <td><input type="text" class="pagos-input-text pers-nombre" data-pers="s" data-idx="${i}" value="${escAttr(s.nombre)}" placeholder="Nombre" autocomplete="off"></td>
+                    <td><select class="pagos-select pagos-select-rango pers-rango" data-pers="s" data-idx="${i}">${opcionesRangoHTML(s.rango)}</select></td>
+                    <td><input type="number" step="0.01" class="pagos-input-num pers-honorarios" data-pers="s" data-idx="${i}" value="${escAttr(String(s.honorarios))}"></td>
+                    <td><input type="number" step="0.01" class="pagos-input-num pers-acuenta" data-pers="s" data-idx="${i}" value="${escAttr(String(s.aCuenta))}"></td>
+                    <td class="cell-calc pers-pendiente" data-pers="s" data-idx="${i}">S/ 0.00</td>
+                    <td><select class="pagos-select pagos-select--cancel pers-cancelado" data-pers="s" data-idx="${i}">
+                        <option value="Pendiente"${s.cancelado === "Pendiente" ? " selected" : ""}>Pendiente</option>
+                        <option value="Cancelado"${s.cancelado === "Cancelado" ? " selected" : ""}>Cancelado</option>
+                    </select></td>`;
+            } else if (i === 4) {
+                persCols = `<td colspan="6" class="cell-blank-personal"></td>`;
+            } else if (i === 5) {
+                persCols = `
+                    <td class="sub-asist-sector">ASISTENTES</td>
+                    <td class="cell-empty"></td>
+                    <td class="sub-asist-lab">HONORARIOS</td>
+                    <td class="sub-asist-lab">A CUENTA</td>
+                    <td class="sub-asist-lab">PENDIENTE</td>
+                    <td class="sub-asist-lab">CANCELADO</td>`;
+            } else if (i >= 6 && i <= 8) {
+                const j = i - 6;
+                const a = m.asistentes[j];
+                persCols = `
+                    <td><input type="text" class="pagos-input-text pers-nombre" data-pers="a" data-idx="${j}" value="${escAttr(a.nombre)}" placeholder="Nombre" autocomplete="off"></td>
+                    <td><select class="pagos-select pagos-select-rango pers-rango" data-pers="a" data-idx="${j}">${opcionesRangoHTML(a.rango)}</select></td>
+                    <td><input type="number" step="0.01" class="pagos-input-num pers-honorarios" data-pers="a" data-idx="${j}" value="${escAttr(String(a.honorarios))}"></td>
+                    <td><input type="number" step="0.01" class="pagos-input-num pers-acuenta" data-pers="a" data-idx="${j}" value="${escAttr(String(a.aCuenta))}"></td>
+                    <td class="cell-calc pers-pendiente" data-pers="a" data-idx="${j}">S/ 0.00</td>
+                    <td><select class="pagos-select pagos-select--cancel pers-cancelado" data-pers="a" data-idx="${j}">
+                        <option value="Pendiente"${a.cancelado === "Pendiente" ? " selected" : ""}>Pendiente</option>
+                        <option value="Cancelado"${a.cancelado === "Cancelado" ? " selected" : ""}>Cancelado</option>
+                    </select></td>`;
+            }
+
+            body += filaGastoBase(i, g, alt, tdImput, persCols);
+        }
+
+        body += `
+            <tr class="total-row-pagos">
+                <td style="text-align:left;padding-left:12px;">TOTAL</td>
+                <td id="pagosFootTotalCosto">S/ 0.00</td>
+                <td class="cell-empty"></td>
+                <td class="cell-empty"></td>
+                <td colspan="2" style="text-align:right;padding-right:12px;">TOTALES</td>
+                <td id="pagosFootTotalHonorarios">S/ 0.00</td>
+                <td id="pagosFootTotalACuenta">S/ 0.00</td>
+                <td id="pagosFootTotalPendiente">S/ 0.00</td>
+                <td class="cell-empty"></td>
+            </tr>`;
+
+        const html = `
+            <div class="pagos-table-container">
+                <table class="pagos-table">
+                    <thead>
+                        <tr>
+                            <th>GASTOS</th>
+                            <th>COSTO APROX.</th>
+                            <th>IMPUTACIÓN</th>
+                            <th>ESTADO</th>
+                            <th>SECTORISTA</th>
+                            <th>RANGO</th>
+                            <th>HONORARIOS</th>
+                            <th>A CUENTA</th>
+                            <th>PENDIENTE</th>
+                            <th>CANCELADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>${body}</tbody>
+                </table>
+            </div>`;
+
+        const wrap = document.getElementById("pagosContainer");
+        wrap.innerHTML = html;
+
+        if (!pagosDelegatedBound) {
+            wrap.addEventListener("input", (e) => {
+                actualizarCalculosPagos();
+                const t = e.target;
+                if (t && t.classList && (t.classList.contains("pers-honorarios") || t.classList.contains("pers-acuenta"))) {
+                    const rowPend = t.closest("tr") && t.closest("tr").querySelector(".pers-pendiente");
+                    if (rowPend) {
+                        rowPend.classList.remove("pagos-cell-flash");
+                        void rowPend.offsetWidth;
+                        rowPend.classList.add("pagos-cell-flash");
+                        window.setTimeout(() => rowPend.classList.remove("pagos-cell-flash"), 550);
+                    }
+                }
+            });
+            wrap.addEventListener("change", (e) => {
+                actualizarCalculosPagos();
+                const t = e.target;
+                if (t && t.matches && t.matches(".gasto-estado, .pers-cancelado")) {
+                    pulsarSelectPagos(t);
+                }
+            });
+            pagosDelegatedBound = true;
+        }
+        actualizarCalculosPagos();
+    }
+
+    function resetearDropdownsPagos() {
+        document.querySelectorAll(".gasto-estado").forEach((sel) => {
+            sel.value = "Pendiente";
+        });
+        document.querySelectorAll(".pers-cancelado").forEach((sel) => {
+            sel.value = "Pendiente";
+        });
+        sincronizarAparienciaSelectsPagos();
+        document.querySelectorAll(".gasto-estado, .pers-cancelado").forEach(pulsarSelectPagos);
+    }
+
+    // ============ FUNCIONES PARA CALCULAR BOLSA Y PAGADO DESDE FIREBASE ============
+    async function calcularBolsaYPagado(usuario) {
+        let bolsa = 0, pagado = 0;
+        try {
+            const doc = await db.collection(usuario.coleccion).doc("clientes").get();
+            if (doc.exists) {
+                const data = doc.data();
+                const clientes = data.data || [];
+                console.log(`📊 ${usuario.nombre}: ${clientes.length} clientes`);
+                
+                clientes.forEach(cliente => {
+                    const honorario = parseNumber(cliente.honorarios);
+                    bolsa += honorario;
+                    if (cliente.estadoPago === "SI") {
+                        pagado += honorario;
+                    }
+                });
+            } else {
+                console.warn(`⚠️ ${usuario.nombre}: documento no encontrado`);
+            }
+        } catch(e) {
+            console.error(`❌ Error cargando ${usuario.nombre}:`, e);
+        }
+        console.log(`   📈 BOLSA: ${formatNumberWithCommas(bolsa)} | PAGADO: ${formatNumberWithCommas(pagado)} | DEUDA: ${formatNumberWithCommas(bolsa - pagado)}`);
+        return { bolsa, pagado };
+    }
+
+    // ============ CARGAR TODOS LOS DATOS ============
+    async function cargarTodosLosDatos() {
+        const container = document.getElementById('cobrosContainer');
+        container.innerHTML = '<div class="loading-overlay"><i class="fas fa-spinner fa-pulse"></i> Cargando datos de clientes...</div>';
+        
+        // Cargar datos guardados previamente (sueldo, imputado, capacidad) y Control de Pagos
+        const [savedDoc, pagosDoc] = await Promise.all([
+            db.collection("welquer").doc("controlCobros").get(),
+            db.collection("welquer").doc("controlPagos").get()
+        ]);
+        const savedData = savedDoc.exists ? savedDoc.data().data : [];
+        const savedMap = new Map();
+        savedData.forEach(item => {
+            savedMap.set(item.sectorista, item);
+        });
+        
+        // Calcular BOLSA y PAGADO para cada usuario
+        const nuevosDatos = [];
+        for (const usuario of usuarios) {
+            const { bolsa, pagado } = await calcularBolsaYPagado(usuario);
+            const saved = savedMap.get(usuario.nombre.toUpperCase());
+            
+            nuevosDatos.push({
+                sectorista: usuario.nombreMostrar,
+                sectoristaKey: usuario.nombre,
+                bolsa: bolsa,
+                pagado: pagado,
+                sueldo: saved ? saved.sueldo : 0,
+                imputado: saved ? saved.imputado : 0,
+                capacidadRango: saved ? saved.capacidadRango : 0,
+                faltaPagar: 0,
+                utilidadCartera: 0
+            });
+        }
+        
+        // Calcular FALTO PAGAR y UTILIDAD DE CARTERA
+        nuevosDatos.forEach(item => {
+            item.faltaPagar = item.bolsa - item.pagado;
+            item.utilidadCartera = item.bolsa - (item.sueldo + item.imputado);
+        });
+        
+        datosCobros = nuevosDatos;
+        renderizarTabla();
+        actualizarTarjetasVerificacion();
+        renderizarControlPagos(pagosDoc.exists ? pagosDoc.data() : null);
+    }
+
+    // ============ ACTUALIZAR TARJETAS DE VERIFICACIÓN ============
+    function actualizarTarjetasVerificacion() {
+        const totales = calcularTotales();
+        document.getElementById('totalBolsa').innerHTML = `S/ ${formatNumberWithCommas(totales.bolsa)}`;
+        document.getElementById('totalPagado').innerHTML = `S/ ${formatNumberWithCommas(totales.pagado)}`;
+        document.getElementById('totalFaltaPagar').innerHTML = `S/ ${formatNumberWithCommas(totales.faltaPagar)}`;
+    }
+
+    // ============ CALCULAR TOTALES ============
+    function calcularTotales() {
+        const totales = {
+            bolsa: 0,
+            pagado: 0,
+            faltaPagar: 0,
+            sueldo: 0,
+            imputado: 0,
+            utilidadCartera: 0,
+            capacidadRango: 0
+        };
+        
+        datosCobros.forEach(item => {
+            totales.bolsa += item.bolsa;
+            totales.pagado += item.pagado;
+            totales.faltaPagar += item.faltaPagar;
+            totales.sueldo += item.sueldo;
+            totales.imputado += item.imputado;
+            totales.utilidadCartera += item.utilidadCartera;
+            totales.capacidadRango += item.capacidadRango;
+        });
+        
+        return totales;
+    }
+
+    // ============ RENDERIZAR TABLA ============
+    function renderizarTabla() {
+        const container = document.getElementById('cobrosContainer');
+        const totales = calcularTotales();
+        const anual = totales.bolsa * 13;
+        
+        let html = `
+            <div class="cobros-table-container">
+                <table class="cobros-table">
+                    <thead>
+                        <tr>
+                            <th>SECTORISTA</th>
+                            <th>BOLSA</th>
+                            <th>PAGADO</th>
+                            <th>FALTO PAGAR</th>
+                            <th>SUELDO</th>
+                            <th>IMPUTADO</th>
+                            <th>UTILIDAD DE CARTERA</th>
+                            <th>CAPACIDAD AL SIGUIENTE RANGO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        datosCobros.forEach((item, index) => {
+            html += `
+                <tr data-index="${index}">
+                    <td style="font-weight: 600; text-align: left;">${item.sectorista}</td>
+                    <td class="calculated-cell">S/ ${formatNumberWithCommas(item.bolsa)}</td>
+                    <td class="calculated-cell">S/ ${formatNumberWithCommas(item.pagado)}</td>
+                    <td class="calculated-cell">S/ ${formatNumberWithCommas(item.faltaPagar)}</td>
+                    <td class="editable-cell" data-field="sueldo" data-value="${item.sueldo}">S/ ${formatNumberWithCommas(item.sueldo)} <i class="fas fa-edit"></i></td>
+                    <td class="editable-cell" data-field="imputado" data-value="${item.imputado}">S/ ${formatNumberWithCommas(item.imputado)} <i class="fas fa-edit"></i></td>
+                    <td class="calculated-cell">S/ ${formatNumberWithCommas(item.utilidadCartera)}</td>
+                    <td class="editable-cell" data-field="capacidadRango" data-value="${item.capacidadRango}">S/ ${formatNumberWithCommas(item.capacidadRango)} <i class="fas fa-edit"></i></td>
+                </tr>
+            `;
+        });
+        
+        // Fila de TOTALES
+        html += `
+            <tr class="total-row">
+                <td style="font-weight: 800;">TOTALES</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.bolsa)}</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.pagado)}</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.faltaPagar)}</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.sueldo)}</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.imputado)}</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.utilidadCartera)}</td>
+                <td style="font-weight: 700;">S/ ${formatNumberWithCommas(totales.capacidadRango)}</td>
+            </tr>
+        `;
+        
+        // Fila de ANUAL
+        html += `
+            <tr class="anual-row">
+                <td style="font-weight: 800;">ANUAL</td>
+                <td style="font-weight: 700;" colspan="7">S/ ${formatNumberWithCommas(anual)}</td>
+            </tr>
+        `;
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        container.innerHTML = html;
+        
+        // Agregar event listeners para celdas editables
+        document.querySelectorAll('.editable-cell').forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const row = cell.closest('tr');
+                const index = parseInt(row.getAttribute('data-index'));
+                const field = cell.getAttribute('data-field');
+                const currentValue = parseFloat(cell.getAttribute('data-value'));
+                
+                if (editModeCell) {
+                    editModeCell.innerHTML = `S/ ${formatNumberWithCommas(parseFloat(editModeCell.getAttribute('data-value')))} <i class="fas fa-edit"></i>`;
+                }
+                
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.step = '0.01';
+                input.value = currentValue;
+                input.style.width = '100%';
+                input.style.padding = '4px 8px';
+                input.style.borderRadius = '8px';
+                input.style.border = `1px solid var(--accent-primary)`;
+                input.style.backgroundColor = 'var(--input-bg)';
+                input.style.color = 'var(--text-primary)';
+                
+                cell.innerHTML = '';
+                cell.appendChild(input);
+                input.focus();
+                
+                const saveEdit = () => {
+                    const newValue = parseFloat(input.value) || 0;
+                    if (!isNaN(newValue) && datosCobros[index]) {
+                        datosCobros[index][field] = newValue;
+                        // Recalcular UTILIDAD DE CARTERA
+                        datosCobros[index].utilidadCartera = datosCobros[index].bolsa - (datosCobros[index].sueldo + datosCobros[index].imputado);
+                    }
+                    renderizarTabla();
+                    actualizarTarjetasVerificacion();
+                    editModeCell = null;
+                };
+                
+                input.addEventListener('blur', saveEdit);
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        saveEdit();
+                    }
+                });
+                
+                editModeCell = cell;
+            });
+        });
+    }
+
+    // ============ RECALCULAR BOLSA Y PAGADO DESDE FIREBASE ============
+    async function recalcularBolsaYPagado() {
+        const btnRecalcular = document.getElementById('btnRecalcular');
+        const originalText = btnRecalcular.innerHTML;
+        btnRecalcular.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Recalculando...';
+        btnRecalcular.disabled = true;
+        
+        for (let i = 0; i < datosCobros.length; i++) {
+            const item = datosCobros[i];
+            const usuarioData = usuarios.find(u => u.nombreMostrar === item.sectorista);
+            if (usuarioData) {
+                const { bolsa, pagado } = await calcularBolsaYPagado(usuarioData);
+                item.bolsa = bolsa;
+                item.pagado = pagado;
+                item.faltaPagar = item.bolsa - item.pagado;
+                item.utilidadCartera = item.bolsa - (item.sueldo + item.imputado);
+            }
+        }
+        
+        renderizarTabla();
+        actualizarTarjetasVerificacion();
+        btnRecalcular.innerHTML = originalText;
+        btnRecalcular.disabled = false;
+        alert('✅ Datos de BOLSA y PAGADO actualizados desde los paneles');
+    }
+
+    // ============ GUARDAR EN FIREBASE ============
+    async function guardarEnFirebase() {
+        const btnGuardar = document.getElementById('btnGuardarCobros');
+        const originalText = btnGuardar.innerHTML;
+        btnGuardar.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Guardando...';
+        btnGuardar.disabled = true;
+        
+        // Guardar solo los campos editables (sueldo, imputado, capacidadRango)
+        const datosAGuardar = datosCobros.map(item => ({
+            sectorista: item.sectoristaKey,
+            sueldo: item.sueldo,
+            imputado: item.imputado,
+            capacidadRango: item.capacidadRango
+        }));
+        
+        try {
+            const tienePagos = !!document.querySelector(".gasto-costo");
+            const ops = [db.collection("welquer").doc("controlCobros").set({ data: datosAGuardar })];
+            if (tienePagos) {
+                ops.push(db.collection("welquer").doc("controlPagos").set(recolectarControlPagosDesdeDOM()));
+            }
+            await Promise.all(ops);
+            alert('✅ Datos guardados correctamente en Firebase (Control de Cobros' + (tienePagos ? ' y Control de Pagos' : '') + ')');
+        } catch(e) {
+            console.error('Error al guardar:', e);
+            alert('❌ Error al guardar los datos');
+        }
+        
+        btnGuardar.innerHTML = originalText;
+        btnGuardar.disabled = false;
+    }
+
+    // ============ EVENTOS ============
+    document.getElementById("btnVolverIndex").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+    
+    document.getElementById("btnGuardarCobros").addEventListener("click", guardarEnFirebase);
+    document.getElementById("btnRecalcular").addEventListener("click", recalcularBolsaYPagado);
+    document.getElementById("btnResetPagos").addEventListener("click", () => {
+        resetearDropdownsPagos();
+    });
+    
+    // Inicializar
+    cargarTodosLosDatos();
+</script>
+</body>
+</html>
